@@ -15,7 +15,7 @@ public class Tile {
     b2.setTransform(new Vector2(50, 30), (float) (-20f / 180f * Math.PI));
 
     PolygonShape groundBox = new PolygonShape();
-    groundBox.setAsBox(30, 5);
+    groundBox.setAsBox(1, 1);
 
     b1.createFixture(groundBox, 0.0f);
     b2.createFixture(groundBox, 0.0f);

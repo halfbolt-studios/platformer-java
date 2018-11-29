@@ -13,7 +13,7 @@ public class Render {
   public Render(World w) {
     this.w = w;
     cam = new OrthographicCamera();
-    cam.setToOrtho(true, 60, 60 * ((float) Gdx.graphics.getHeight() / Gdx.graphics.getWidth()));
+    cam.setToOrtho(true, 20, 20 * ((float) Gdx.graphics.getHeight() / Gdx.graphics.getWidth()));
 
     cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
   }

@@ -15,6 +15,7 @@ public class World {
 
   public void update() {
     w.step(1/60f, 6, 2);
+    p.update();
   }
 
   public com.badlogic.gdx.physics.box2d.World getWorld() {
