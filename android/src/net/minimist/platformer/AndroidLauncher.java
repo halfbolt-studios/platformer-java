@@ -1,10 +1,8 @@
 package net.minimist.platformer;
 
 import android.os.Bundle;
-
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import net.minimist.platformer.Platformer;
 
 public class AndroidLauncher extends AndroidApplication {
   @Override
