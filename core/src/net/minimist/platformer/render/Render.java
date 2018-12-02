@@ -32,10 +32,12 @@ public class Render {
 
   public void render() {
     cam.update();
-
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+    // For debugging box2d
     debugRenderer.render(w.getWorld(), cam.combined);
+
+    w.render();
     w.getPlayer().render();
     control.render();
   }
@@ -44,7 +46,7 @@ public class Render {
     float borderX = (float) Gdx.graphics.getWidth() / 2.5f;
     float borderY = (float) Gdx.graphics.getHeight() / 2.5f;
     Vector3 pos = cam.project(new Vector3(w.getPlayer().getPos().x, w.getPlayer().getPos().y, 0));
-    float div = 50f;
+    float div = 200f;
     if (pos.x < borderX) {
       cam.position.set(cam.position.x + (pos.x - borderX) / div, cam.position.y, 0);
     }
