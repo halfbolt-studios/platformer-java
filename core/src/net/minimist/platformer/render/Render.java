@@ -41,7 +41,6 @@ public class Render {
   }
 
   public void update() {
-    System.out.println(Gdx.graphics.getWidth());
     float borderX = (float) Gdx.graphics.getWidth() / 2.5f;
     float borderY = (float) Gdx.graphics.getHeight() / 2.5f;
     Vector3 pos = cam.project(new Vector3(w.getPlayer().getPos().x, w.getPlayer().getPos().y, 0));
