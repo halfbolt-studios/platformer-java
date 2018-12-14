@@ -1,33 +1,37 @@
 package net.minimist.platformer.world;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import net.minimist.platformer.player.Controller;
 import net.minimist.platformer.player.Player;
-import net.minimist.platformer.world.tile.Tile;
-
-import java.util.HashMap;
 
 public class World {
-  private com.badlogic.gdx.physics.box2d.World w;
-  private Player p;
-  private HashMap<Vector2, Tile> tiles = new HashMap<>();
-  public World(Controller control) {
-    w = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
-    tiles.put(new Vector2(0, 0), new Tile(this, new Vector2(0 ,0)));
-    p = new Player(this, control);
-  }
+    private com.badlogic.gdx.physics.box2d.World w;
+    private Player p;
+    private Tilemap map;
+    private TileManager manager;
 
-  public void update() {
-    w.step(1/60f, 6, 2);
-    p.update();
-  }
+    public World(Controller control, OrthographicCamera cam) {
+        w = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
+        p = new Player(this, control);
+        map = new Tilemap("tilemaps/level0.tmx", cam);
+        manager = new TileManager(this);
+    }
 
-  public void render() {
-    tiles.forEach((pos, tile) -> tile.render());
-  }
+    public void update() {
+        w.step(1 / 60f, 6, 2);
+        p.update();
+    }
 
-  public com.badlogic.gdx.physics.box2d.World getWorld() {
-    return w;
-  }
-  public Player getPlayer() { return p; }
+    public com.badlogic.gdx.physics.box2d.World getWorld() {
+        return w;
+    }
+
+    public Player getPlayer() {
+        return p;
+    }
+
+    public Tilemap getTilemap() {
+        return map;
+    }
 }
