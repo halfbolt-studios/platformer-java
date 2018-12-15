@@ -15,9 +15,9 @@ public class TileManager {
         hitboxes = w.getTilemap().getLayer(0);
         for (int y = 0; y < hitboxes.getHeight(); y++) {
             for (int x = 0; x < hitboxes.getWidth(); x++) {
-                if (hitboxes.getCell(x, y * -1 + 100) != null) {
-                    TiledMapTile t = hitboxes.getCell(x, y * -1 + 100).getTile();
-                    tiles.put(new Vector2(x * 2, y * 2), new Tile(w, new Vector2(x * 2, y * 2)));
+                if (hitboxes.getCell(x, y * -1 + hitboxes.getHeight()) != null) {
+                    TiledMapTile t = hitboxes.getCell(x, y * -1 + hitboxes.getHeight()).getTile();
+                    tiles.put(new Vector2(x, y), new Tile(w, new Vector2(x, y)));
                 }
             }
         }

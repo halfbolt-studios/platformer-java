@@ -8,18 +8,13 @@ public class Tile {
     private Body body;
 
     public Tile(World w, Vector2 pos) {
-
-        System.out.print("MAKING TILE x: ");
-        System.out.print(pos.x);
-        System.out.print(", y: ");
-        System.out.println(pos.y);
         BodyDef groundBodyDef = new BodyDef();
 
         body = w.getWorld().createBody(groundBodyDef);
-        body.setTransform(pos, 0);
+        body.setTransform(new Vector2(pos.x + 0.5f, pos.y + 0.5f), 0);
 
         PolygonShape groundBox = new PolygonShape();
-        groundBox.setAsBox(1, 1);
+        groundBox.setAsBox(0.5f, 0.5f);
 
         body.createFixture(groundBox, 0.0f);
         groundBox.dispose();

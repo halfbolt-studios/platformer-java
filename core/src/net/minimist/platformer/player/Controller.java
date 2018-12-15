@@ -36,7 +36,7 @@ public class Controller {
     }
 
     public Vector2 getMovementDelta() {
-        float speed = 5f;
+        float speed = 1.7f;
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             // Mobile
             return new Vector2((float) touchpad.getX() * speed, (float) touchpad.getY() * speed);

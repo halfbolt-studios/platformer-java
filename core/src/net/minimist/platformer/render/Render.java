@@ -5,12 +5,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import net.minimist.platformer.player.Controller;
 import net.minimist.platformer.world.World;
+import net.minimist.platformer.world.tile.TileRender;
 
 public class Render {
     private World w;
@@ -18,36 +18,39 @@ public class Render {
     private OrthographicCamera cam;
     private SpriteBatch batch;
     private Controller control;
-    private OrthogonalTiledMapRenderer render;
-    private final int size = 100;
+    private TileRender tileRender;
+    private final int tilesWide = 40;
+    private SpriteBatch sb;
 
     public Render() {
         cam = new OrthographicCamera();
-        cam.setToOrtho(true, size, size * ((float) Gdx.graphics.getHeight() / Gdx.graphics.getWidth()));
         cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
 
         batch = new SpriteBatch();
-        batch.setProjectionMatrix(cam.combined);
 
         control = new Controller();
-        this.w = new World(control, cam);
+        w = new World(control, cam);
 
-        render = new OrthogonalTiledMapRenderer(w.getTilemap().getMap());
-        render.setView(cam);
+        sb = new SpriteBatch();
+        sb.setProjectionMatrix(cam.combined);
+
+        tileRender = new TileRender(w, sb);
+
+        System.out.println(w.getTilemap().getLayer(0).isVisible());
     }
 
     public void render() {
-        cam.update();
         Gdx.gl.glClearColor(.1f, .1f, .2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        cam.update();
+        sb.setProjectionMatrix(cam.combined);
 
         // For debugging box2d
         debugRenderer.render(w.getWorld(), cam.combined);
 
         // For levels
-        render.getBatch().begin();
-        render.renderTileLayer(w.getTilemap().getLayer(1));
-        render.getBatch().end();
+        tileRender.render(1, 1);
+
 
         w.getPlayer().render();
         control.render();
@@ -73,9 +76,10 @@ public class Render {
     }
 
     public void resize() {
-        cam.setToOrtho(true, size, size * ((float) Gdx.graphics.getHeight() / Gdx.graphics.getWidth()));
+        cam.setToOrtho(true,
+                tilesWide,
+                tilesWide * ((float) Gdx.graphics.getHeight() / Gdx.graphics.getWidth()));
         batch.setProjectionMatrix(cam.combined);
-        render.getBatch().setProjectionMatrix(cam.combined);
     }
 
     public World getWorld() {
