@@ -4,7 +4,7 @@ sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 ext {
-	mainClassName = "net.minimist.platformer.IOSLauncher"
+	mainClassName = "net.halfbolt.platformer.IOSLauncher"
 }
 
 launchIPhoneSimulator.dependsOn build
@@ -14,4 +14,9 @@ createIPA.dependsOn build
 
 robovm {
 	archs = "thumbv7:arm64"
+}
+
+eclipse.project {
+    name = appName + "-ios"
+    natures 'org.robovm.eclipse.RoboVMNature'
 }

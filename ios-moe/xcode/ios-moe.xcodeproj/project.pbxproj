@@ -355,7 +355,7 @@
 					"$(inherited)",
 					"${MOE_OTHER_LDFLAGS}",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "net.minimist.platformer";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.halfbolt.platformer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_STYLE = "non-global";
 			};
@@ -389,7 +389,7 @@
 					"$(inherited)",
 					"${MOE_OTHER_LDFLAGS}",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "net.minimist.platformer";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.halfbolt.platformer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_STYLE = "non-global";
 			};
@@ -516,7 +516,7 @@
 					"${MOE_OTHER_LDFLAGS}",
 					"$(LIBGDX_NATIVES)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "net.minimist.platformer";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.halfbolt.platformer";
 				PRODUCT_NAME = "Platformer";
 				STRIP_STYLE = "non-global";
 			};
@@ -553,7 +553,7 @@
 					"${MOE_OTHER_LDFLAGS}",
 					"$(LIBGDX_NATIVES)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "net.minimist.platformer";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.halfbolt.platformer";
 				PRODUCT_NAME = "Platformer";
 				STRIP_STYLE = "non-global";
 			};

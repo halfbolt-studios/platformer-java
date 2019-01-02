@@ -21,7 +21,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MOE.Main.Class</key>
-	<string>net.minimist.platformer.IOSMoeLauncher</string>
+	<string>net.halfbolt.platformer.IOSMoeLauncher</string>
 	<key>UIApplicationExitsOnSuspend</key>
 	<false/>
 	<key>UIRequiredDeviceCapabilities</key>

@@ -8,24 +8,24 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
         google()
-
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.0'
+        classpath 'com.android.tools.build:gradle:3.2.0'
         classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.5'
         classpath 'org.multi-os-engine:moe-gradle:1.4.0'
-        
+        classpath 'com.google.gms:google-services:4.2.0'
 
     }
 }
 
 allprojects {
+    apply plugin: "eclipse"
     apply plugin: "idea"
 
     version = '1.0'
     ext {
         appName = "Platformer"
-        gdxVersion = '1.9.8'
+        gdxVersion = '1.9.9'
         roboVMVersion = '2.3.5'
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
@@ -77,6 +77,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
+        implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         
     }
 }
@@ -105,6 +106,7 @@ project(":core") {
         implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
+        implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         
     }
 }
@@ -121,4 +123,8 @@ project(":ios-moe") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-ios"
         
     }
+}
+
+tasks.eclipse.doLast {
+    delete ".project"
 }
