@@ -16,11 +16,15 @@ public class TileRender {
 
     public void render(int i, float tileSize) {
         TiledMapTileLayer layer = w.getTilemap().getLayer(i);
+        if (!layer.isVisible()){
+            return;
+        }
         sb.begin();
         for (int y = 0; y < layer.getHeight(); y++) {
             for (int x = 0; x < layer.getWidth(); x++) {
-                if (layer.getCell(x, y * -1 + layer.getHeight()) != null) {
-                    TiledMapTile tile = layer.getCell(x, y * -1 + layer.getHeight()).getTile();
+                TiledMapTileLayer.Cell cell = layer.getCell(x, layer.getHeight() - y);
+                if (cell != null) {
+                    TiledMapTile tile = cell.getTile();
                     TextureRegion region = tile.getTextureRegion();
                     sb.draw(region, x * tileSize, y * tileSize, tileSize, tileSize);
                 }
