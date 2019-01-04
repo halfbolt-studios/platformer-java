@@ -10,22 +10,24 @@ import java.util.Collections;
 import java.util.HashMap;
 
 public class Pathfind {
-    public static Node findPath(Point sPos, Point ePos, World w) {
+
+    public static Node findPath(Point sPos, Point ePos, World w, int addMinX, int addMinY, int addMaxX, int addMaxY) {
         int minX, minY, maxX, maxY;
         if (ePos.getX() > sPos.getX()) {
-            minX = (int) sPos.getX() - 5;
-            maxX = (int) ePos.getX() + 5;
+            minX = (int) (sPos.getX() - addMinX);
+            maxX = (int) (ePos.getX() + addMaxX);
         } else {
-            minX = (int) ePos.getX() - 5;
-            maxX = (int) sPos.getX() + 5;
+            minX = (int) (ePos.getX() - addMinX);
+            maxX = (int) (sPos.getX() + addMaxX);
         }
         if (ePos.getY() > sPos.getY()) {
-            minY = (int) sPos.getY() - 5;
-            maxY = (int) ePos.getY() + 5;
+            minY = (int) (sPos.getY() - addMinY);
+            maxY = (int) (ePos.getY() + addMaxY);
         } else {
-            minY = (int) ePos.getY() - 5;
-            maxY = (int) sPos.getY() + 5;
+            minY = (int) (ePos.getY() - addMinY);
+            maxY = (int) (sPos.getY() + addMaxY);
         }
+        //System.out.println("minX: " + minX + ", minY: " + minY + ", maxX: " + maxX + ", maxY: " + maxY);
         return findPath(sPos, ePos, new MapSegment(new Vector2(minX, minY), new Vector2(maxX, maxY), w.getTileManager().getMap()));
     }
 
@@ -45,10 +47,50 @@ public class Pathfind {
         }
         ArrayList<Point> offsets = new ArrayList<>();
         offsets.add(new Point(1, 0));
-        offsets.add(new Point(-1, 0));
         offsets.add(new Point(0, 1));
+        offsets.add(new Point(-1, 0));
         offsets.add(new Point(0, -1));
-        Collections.shuffle(offsets);
+        //arrange by player and enemy positions
+        if (ePos.getX() >= sPos.getX() && ePos.getY() >= sPos.getY()) {
+            offsets.set(0, new Point(1, 0));
+            offsets.set(1, new Point(0, 1));
+            offsets.set(2, new Point(-1, 0));
+            offsets.set(3, new Point(0, -1));
+        } else if (ePos.getX() < sPos.getX() && ePos.getY() >= sPos.getY()) {
+            offsets.set(0, new Point(-1, 0));
+            offsets.set(1, new Point(0, 1));
+            offsets.set(2, new Point(1, 0));
+            offsets.set(3, new Point(0, -1));
+        } else if (ePos.getX() >= sPos.getX() && ePos.getY() < sPos.getY()) {
+            offsets.set(0, new Point(1, 0));
+            offsets.set(1, new Point(0, -1));
+            offsets.set(2, new Point(-1, 0));
+            offsets.set(3, new Point(0, 1));
+        } else if (ePos.getX() < sPos.getX() && ePos.getY() < sPos.getY()) {
+            offsets.set(0, new Point(-1, 0));
+            offsets.set(1, new Point(0, -1));
+            offsets.set(2, new Point(1, 0));
+            offsets.set(3, new Point(0, 1));
+        }
+        //shuffle first two offsets and re-add them to the offsets array
+        ArrayList<Point> bestOffsets = new ArrayList<>();
+        bestOffsets.add(offsets.get(0));
+        bestOffsets.add(offsets.get(1));
+        Collections.shuffle(bestOffsets);
+        offsets.set(0, bestOffsets.get(0));
+        offsets.set(1, bestOffsets.get(1));
+        //shuffle last two offsets and re-add them to the offsets array
+        ArrayList<Point> worstOffsets = new ArrayList<>();
+        worstOffsets.add(offsets.get(2));
+        worstOffsets.add(offsets.get(3));
+        Collections.shuffle(worstOffsets);
+        offsets.set(2, worstOffsets.get(0));
+        offsets.set(3, worstOffsets.get(1));
+        //extra
+        //offsets.add(new Point(1, 1));
+        //offsets.add(new Point(-1, -1));
+        //offsets.add(new Point(-1, 1));
+        //offsets.add(new Point(1, -1));
 
         int minLength = Integer.MAX_VALUE;
         Node newNode = null;
