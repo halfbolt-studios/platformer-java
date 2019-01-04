@@ -1,4 +1,4 @@
-package net.halfbolt.platformer.world.tile;
+package net.halfbolt.platformer.world.display;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

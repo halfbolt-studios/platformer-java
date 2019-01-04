@@ -1,4 +1,4 @@
-package net.halfbolt.platformer.world;
+package net.halfbolt.platformer.world.display;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;

@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import net.halfbolt.platformer.player.Controller;
 import net.halfbolt.platformer.world.World;
-import net.halfbolt.platformer.world.tile.TileRender;
+import net.halfbolt.platformer.world.display.TileRender;
 
 public class Render {
     private World w;
