@@ -1,6 +1,5 @@
 package net.halfbolt.platformer.enemy.pathfind;
 
-import com.badlogic.gdx.math.Vector2;
 import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.world.World;
 import net.halfbolt.platformer.world.collision.tile.Tile;
@@ -14,111 +13,70 @@ public class Pathfind {
     public static Node findPath(Point sPos, Point ePos, World w, int addMinX, int addMinY, int addMaxX, int addMaxY) {
         int minX, minY, maxX, maxY;
         if (ePos.getX() > sPos.getX()) {
-            minX = (int) (sPos.getX() - addMinX);
-            maxX = (int) (ePos.getX() + addMaxX);
+            minX = (sPos.getX() - addMinX);
+            maxX = (ePos.getX() + addMaxX);
         } else {
-            minX = (int) (ePos.getX() - addMinX);
-            maxX = (int) (sPos.getX() + addMaxX);
+            minX = (ePos.getX() - addMinX);
+            maxX = (sPos.getX() + addMaxX);
         }
         if (ePos.getY() > sPos.getY()) {
-            minY = (int) (sPos.getY() - addMinY);
-            maxY = (int) (ePos.getY() + addMaxY);
+            minY = (sPos.getY() - addMinY);
+            maxY = (ePos.getY() + addMaxY);
         } else {
-            minY = (int) (ePos.getY() - addMinY);
-            maxY = (int) (sPos.getY() + addMaxY);
+            minY = (ePos.getY() - addMinY);
+            maxY = (sPos.getY() + addMaxY);
         }
         //System.out.println("minX: " + minX + ", minY: " + minY + ", maxX: " + maxX + ", maxY: " + maxY);
-        return findPath(sPos, ePos, new MapSegment(new Vector2(minX, minY), new Vector2(maxX, maxY), w.getTileManager().getMap()));
+        return findPath(sPos, ePos, new MapSegment(new Point(minX, minY), new Point(maxX, maxY), w.getTileManager().getMap()));
     }
 
     private static Node findPath(Point sPos, Point ePos, MapSegment map) {
-        if (!map.inBounds(sPos)) {
-            return null;
-        }
-        if (!map.inBounds(ePos)) {
-            return null;
-        }
-        if (map.get(sPos).equals(Type.EXPLORED) || map.get(sPos).equals(Type.WALL)) {
-            return null;
-        }
-        map.set(sPos, Type.EXPLORED);
-        if (sPos.equals(ePos)) {
-            return new Node(sPos.clone());
-        }
-        ArrayList<Point> offsets = new ArrayList<>();
-        offsets.add(new Point(1, 0));
-        offsets.add(new Point(0, 1));
-        offsets.add(new Point(-1, 0));
-        offsets.add(new Point(0, -1));
-        //arrange by player and enemy positions
-        if (ePos.getX() >= sPos.getX() && ePos.getY() >= sPos.getY()) {
-            offsets.set(0, new Point(1, 0));
-            offsets.set(1, new Point(0, 1));
-            offsets.set(2, new Point(-1, 0));
-            offsets.set(3, new Point(0, -1));
-        } else if (ePos.getX() < sPos.getX() && ePos.getY() >= sPos.getY()) {
-            offsets.set(0, new Point(-1, 0));
-            offsets.set(1, new Point(0, 1));
-            offsets.set(2, new Point(1, 0));
-            offsets.set(3, new Point(0, -1));
-        } else if (ePos.getX() >= sPos.getX() && ePos.getY() < sPos.getY()) {
-            offsets.set(0, new Point(1, 0));
-            offsets.set(1, new Point(0, -1));
-            offsets.set(2, new Point(-1, 0));
-            offsets.set(3, new Point(0, 1));
-        } else if (ePos.getX() < sPos.getX() && ePos.getY() < sPos.getY()) {
-            offsets.set(0, new Point(-1, 0));
-            offsets.set(1, new Point(0, -1));
-            offsets.set(2, new Point(1, 0));
-            offsets.set(3, new Point(0, 1));
-        }
-        //shuffle first two offsets and re-add them to the offsets array
-        ArrayList<Point> bestOffsets = new ArrayList<>();
-        bestOffsets.add(offsets.get(0));
-        bestOffsets.add(offsets.get(1));
-        Collections.shuffle(bestOffsets);
-        offsets.set(0, bestOffsets.get(0));
-        offsets.set(1, bestOffsets.get(1));
-        //shuffle last two offsets and re-add them to the offsets array
-        ArrayList<Point> worstOffsets = new ArrayList<>();
-        worstOffsets.add(offsets.get(2));
-        worstOffsets.add(offsets.get(3));
-        Collections.shuffle(worstOffsets);
-        offsets.set(2, worstOffsets.get(0));
-        offsets.set(3, worstOffsets.get(1));
-        //extra
-        //offsets.add(new Point(1, 1));
-        //offsets.add(new Point(-1, -1));
-        //offsets.add(new Point(-1, 1));
-        //offsets.add(new Point(1, -1));
-
-        int minLength = Integer.MAX_VALUE;
-        Node newNode = null;
-        for (int i = 0; i < offsets.size(); i++) {
-            Node node = findPath(sPos.add(offsets.get(i)), ePos, map);
-            if (node != null) {
-                int length = node.getLength();
-                if (length < minLength) {
-                    minLength = length;
-                    newNode = new Node(sPos.clone(), node);
+        // Completely new pathfinding. Works much better, and there's no recursion!
+        // It looks outward from the end position, until it finds the start position.
+        // This is because out nodes store the child, not the parent.
+        ArrayList<Node> tipNodes = new ArrayList<>();
+        // Set the list of nodes going outward to be the end (we are looking backward here)
+        tipNodes.add(new Node(ePos.clone()));
+        while (tipNodes.size() > 0) {
+            ArrayList<Node> newTipNodes = new ArrayList<>();
+            for (Node node : tipNodes) {
+                // Check if it's the start node (still looking backward)
+                if (node.getPos().equals(sPos)) {
+                    return node;
                 }
+                ArrayList<Node> extentions = new ArrayList<>();
+                extentions.add(new Node(new Point(node.getPos().getX(), node.getPos().getY() - 1), node)); // up
+                extentions.add(new Node(new Point(node.getPos().getX(), node.getPos().getY() + 1), node)); // down
+                extentions.add(new Node(new Point(node.getPos().getX() + 1, node.getPos().getY()), node)); // right
+                extentions.add(new Node(new Point(node.getPos().getX() - 1, node.getPos().getY()), node)); // left
+                Collections.shuffle(extentions);
+                for (Node extension : extentions) {
+                    if (map.inBounds(extension.getPos()) &&
+                            map.get(extension.getPos()) != Type.WALL &&
+                            map.get(extension.getPos()) != Type.EXPLORED) {
+                        newTipNodes.add(extension);
+                        map.set(extension.getPos(), Type.EXPLORED);
+                    }
+                }
+
             }
+            tipNodes = newTipNodes;
         }
-        return newNode;
+        return null;
     }
 
     private static class MapSegment {
-        private Vector2 min;
-        private Vector2 max;
+        private Point min;
+        private Point max;
         private HashMap<Point, Type> map = new HashMap<>();
-        public MapSegment(Vector2 min, Vector2 max, HashMap<Point, Tile> bigMap) {
+        private MapSegment(Point min, Point max, HashMap<Point, Tile> bigMap) {
             this.min = min;
             this.max = max;
-            if (min.x >= max.x || min.y >= max.y) {
+            if (min.getX() >= max.getX() || min.getY() >= max.getY()) {
                 throw new RuntimeException("Min is greater than max");
             }
-            for (int y = (int) min.y; y < max.y; y++) {
-                for (int x = (int) min.x; x < max.x; x++) {
+            for (int y = min.getY(); y < max.getY(); y++) {
+                for (int x = min.getX(); x < max.getX(); x++) {
                     Point pos = new Point(x, y);
                     if (bigMap.get(pos) == null) {
                         map.put(pos, Type.EMPTY);
@@ -129,18 +87,18 @@ public class Pathfind {
             }
         }
 
-        public boolean inBounds(Point pos) {
-            return pos.getX() >= min.x && pos.getX() < max.x && pos.getY() >= min.y && pos.getY() < max.y;
+        private boolean inBounds(Point pos) {
+            return pos.getX() >= min.getX() && pos.getX() < max.getX() && pos.getY() >= min.getY() && pos.getY() < max.getY();
         }
 
-        public void set(Point pos, Type type) {
+        private void set(Point pos, Type type) {
             if (!inBounds(pos)) {
                 throw new RuntimeException("Position " + pos + " is outside of bounds");
             }
             map.put(pos, type);
         }
 
-        public Type get(Point pos) {
+        private Type get(Point pos) {
             if (!inBounds(pos)) {
                 throw new RuntimeException("Position " + pos + " is outside of bounds");
             }

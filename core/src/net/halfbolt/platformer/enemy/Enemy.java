@@ -59,9 +59,11 @@ public class Enemy {
         Node child = pathNode;
         sr.setProjectionMatrix(cam.combined);
         sr.begin(ShapeRenderer.ShapeType.Line);
-        while (child != null) {
+        while (child != null && child.getChild() != null) {
             sr.setColor(Color.RED);
             sr.rect(child.getPos().getX(), child.getPos().getY(), 1, 1);
+            sr.setColor(Color.GREEN);
+            sr.line(child.getPos().toVec().add(0.5f, 0.5f), child.getChild().getPos().toVec().add(0.5f, 0.5f));
             child = child.getChild();
         }
         sr.end();
@@ -75,7 +77,7 @@ public class Enemy {
         //check to see if there is a possible route between player and enemy in the map segment
         try {
             //move enemy to next path node
-            if (body.getPosition().dst(pathNode.getPos().toVec()) < 2) {
+            if (body.getPosition().dst(pathNode.getPos().toVec()) < 1.5) {
                 pathNode = pathNode.getChild();
             }
             Vector2 targetVec = pathNode.getPos().toVec().sub(body.getPosition());
