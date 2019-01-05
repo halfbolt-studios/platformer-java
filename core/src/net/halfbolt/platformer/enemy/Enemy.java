@@ -22,7 +22,6 @@ public class Enemy {
     private Texture tex;
     private ShapeRenderer sr = new ShapeRenderer();
     private OrthographicCamera cam;
-    private static int addMinX, addMinY, addMaxX, addMaxY;
 
     public Enemy(Point pos, World w, OrthographicCamera cam) {
         this.w = w;
@@ -46,12 +45,6 @@ public class Enemy {
         body.createFixture(fixtureDef);
         circle.dispose();
 
-        addMinX = 5;
-        addMaxX = 5;
-        addMinY = 5;
-        addMaxY = 5;
-        pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(w.getPlayer().getPos()), w, addMinX, addMinY, addMaxX, addMaxY);
-        target = new Point(w.getPlayer().getPos());
         this.cam = cam;
     }
 
@@ -67,53 +60,27 @@ public class Enemy {
             child = child.getChild();
         }
         sr.end();
+        sr.begin(ShapeRenderer.ShapeType.Filled);
+        sr.setColor(Color.BLUE);
+        sr.rect((int) (getPos().x - 0.5f), (int) (getPos().y + 0.5f), 1, 1);
+        sr.end();
     }
 
     public void update() {
         if (pathNode == null || pathNode.getChild() == null || !new Point(w.getPlayer().getPos()).equals(target)) {
-            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(w.getPlayer().getPos()), w, addMinX, addMinY, addMaxX, addMaxY);
+            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(w.getPlayer().getPos()), w);
             target = new Point(w.getPlayer().getPos());
         }
-        //check to see if there is a possible route between player and enemy in the map segment
-        try {
-            //move enemy to next path node
-            if (body.getPosition().dst(pathNode.getPos().toVec()) < 1.5) {
-                pathNode = pathNode.getChild();
-            }
-            Vector2 targetVec = pathNode.getPos().toVec().sub(body.getPosition());
-            targetVec = new Vector2(targetVec.x * 100, targetVec.y * 100);
-            body.applyForceToCenter(targetVec, true);
-
-            //try to keep map segment borders as they originally were
-            if (addMinX > 5) {
-                addMinX--;
-            }
-            if (addMaxX > 5) {
-                addMaxX--;
-            }
-            if (addMinY > 5) {
-                addMinY--;
-            }
-            if (addMaxY > 5) {
-                addMaxY--;
-            }
-
-            //if not, increase map segment borders
-        } catch (NullPointerException e) {
-            //Increase map segment borders when there is no possible route in the map segment without hitting tiles from the enemy to the player
-            if (addMinX < 40) {
-                addMinX++;
-            }
-            if (addMaxX < 40) {
-                addMaxX++;
-            }
-            if (addMinY < 40) {
-                addMinY++;
-            }
-            if (addMaxY < 40) {
-                addMaxY++;
-            }
+        if (pathNode == null || pathNode.getChild() == null) {
+            return;
         }
+        //move enemy to next path node
+        if (body.getPosition().dst(pathNode.getPos().toVec()) < 1.2) {
+            pathNode = pathNode.getChild();
+        }
+        Vector2 targetVec = pathNode.getPos().toVec().sub(body.getPosition());
+        targetVec = new Vector2((targetVec.x - 0.5f) * 100, (targetVec.y + 0.5f) * 100);
+        body.applyForce(targetVec, body.getPosition(), true);
     }
 
     public Vector2 getPos() {

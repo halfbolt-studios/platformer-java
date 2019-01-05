@@ -1,6 +1,5 @@
 package net.halfbolt.platformer.helper;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.Objects;
@@ -20,8 +19,8 @@ public class Point {
     }
 
     public Point(Vector2 pos) {
-        this.x = Math.round(pos.x);
-        this.y = Math.round(pos.y);
+        this.x = (int) pos.x;
+        this.y = (int) pos.y;
     }
 
     public int getX() {
