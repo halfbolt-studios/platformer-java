@@ -22,6 +22,7 @@ public class Enemy {
     private Texture tex;
     private ShapeRenderer sr = new ShapeRenderer();
     private OrthographicCamera cam;
+    int offsetMinX, offsetMaxX, offsetMinY, offsetMaxY;
 
     public Enemy(Point pos, World w, OrthographicCamera cam) {
         this.w = w;
@@ -46,6 +47,10 @@ public class Enemy {
         circle.dispose();
 
         this.cam = cam;
+        offsetMinX = 5;
+        offsetMaxX = 5;
+        offsetMinY = 5;
+        offsetMaxY = 5;
     }
 
     public void render() {
@@ -68,19 +73,43 @@ public class Enemy {
 
     public void update() {
         if (pathNode == null || pathNode.getChild() == null || !new Point(w.getPlayer().getPos()).equals(target)) {
-            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(w.getPlayer().getPos()), w);
+            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(w.getPlayer().getPos()), w, offsetMinX, offsetMinY, offsetMaxX, offsetMaxY);
             target = new Point(w.getPlayer().getPos());
         }
-        if (pathNode == null || pathNode.getChild() == null) {
-            return;
+        try {
+            //move enemy to next path node
+            if (body.getPosition().dst(pathNode.getPos().toVec()) < 1.2) {
+                pathNode = pathNode.getChild();
+            }
+            Vector2 targetVec = pathNode.getPos().toVec().sub(body.getPosition());
+            targetVec = new Vector2((targetVec.x - 0.5f) * 100, (targetVec.y + 0.5f) * 100);
+            body.applyForce(targetVec, body.getPosition(), true);
+            if (offsetMinX > 5) {
+                offsetMinX --;
+            }
+            if (offsetMaxX > 5) {
+                offsetMaxX --;
+            }
+            if (offsetMinY > 5) {
+                offsetMinY --;
+            }
+            if (offsetMaxY > 5) {
+                offsetMaxY --;
+            }
+        } catch (NullPointerException e) {
+            if (offsetMinX < 50) {
+                offsetMinX ++;
+            }
+            if (offsetMaxX < 50) {
+                offsetMaxX ++;
+            }
+            if (offsetMinY < 50) {
+                offsetMinY ++;
+            }
+            if (offsetMaxY < 50) {
+                offsetMaxY ++;
+            }
         }
-        //move enemy to next path node
-        if (body.getPosition().dst(pathNode.getPos().toVec()) < 1.2) {
-            pathNode = pathNode.getChild();
-        }
-        Vector2 targetVec = pathNode.getPos().toVec().sub(body.getPosition());
-        targetVec = new Vector2((targetVec.x - 0.5f) * 100, (targetVec.y + 0.5f) * 100);
-        body.applyForce(targetVec, body.getPosition(), true);
     }
 
     public Vector2 getPos() {

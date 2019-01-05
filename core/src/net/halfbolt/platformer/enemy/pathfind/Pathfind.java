@@ -10,22 +10,21 @@ import java.util.HashMap;
 
 public class Pathfind {
 
-    public static Node findPath(Point sPos, Point ePos, World w) {
+    public static Node findPath(Point sPos, Point ePos, World w, int offsetMinX, int offsetMaxX, int offsetMinY, int offsetMaxY) {
         int minX, minY, maxX, maxY;
-        int addOffset = 5;
         if (ePos.getX() > sPos.getX()) {
-            minX = (sPos.getX() - addOffset);
-            maxX = (ePos.getX() + addOffset);
+            minX = (sPos.getX() - offsetMinX);
+            maxX = (ePos.getX() + offsetMaxX);
         } else {
-            minX = (ePos.getX() - addOffset);
-            maxX = (sPos.getX() + addOffset);
+            minX = (ePos.getX() - offsetMinX);
+            maxX = (sPos.getX() + offsetMaxX);
         }
         if (ePos.getY() > sPos.getY()) {
-            minY = (sPos.getY() - addOffset);
-            maxY = (ePos.getY() + addOffset);
+            minY = (sPos.getY() - offsetMinY);
+            maxY = (ePos.getY() + offsetMaxY);
         } else {
-            minY = (ePos.getY() - addOffset);
-            maxY = (sPos.getY() + addOffset);
+            minY = (ePos.getY() - offsetMinY);
+            maxY = (sPos.getY() + offsetMaxY);
         }
         //System.out.println("minX: " + minX + ", minY: " + minY + ", maxX: " + maxX + ", maxY: " + maxY);
         return findPath(sPos, ePos, new MapSegment(new Point(minX, minY), new Point(maxX, maxY), w.getTileManager().getMap()));
