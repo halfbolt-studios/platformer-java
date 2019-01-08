@@ -1,5 +1,7 @@
 package net.halfbolt.platformer.world;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import net.halfbolt.platformer.enemy.Enemy;
@@ -15,6 +17,7 @@ public class World {
     private Enemy e;
     private Tilemap map;
     private TileManager manager;
+    private Boolean paused = false;
 
     public World(Controller control, OrthographicCamera cam) {
         w = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
@@ -25,9 +28,14 @@ public class World {
     }
 
     public void update() {
-        w.step(1 / 60f, 6, 2);
-        p.update();
-        e.update();
+        if (!paused) {
+            w.step(Gdx.graphics.getDeltaTime(), 6, 2);
+            p.update();
+            e.update();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            paused = !paused;
+        }
     }
 
     public com.badlogic.gdx.physics.box2d.World getWorld() {

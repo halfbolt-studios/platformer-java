@@ -22,7 +22,7 @@ public class Enemy {
     private Texture tex;
     private ShapeRenderer sr = new ShapeRenderer();
     private OrthographicCamera cam;
-    int offsetMinX, offsetMaxX, offsetMinY, offsetMaxY;
+    private int offsetAmount;
 
     public Enemy(Point pos, World w, OrthographicCamera cam) {
         this.w = w;
@@ -36,7 +36,7 @@ public class Enemy {
         body.setAngularDamping(5f);
 
         CircleShape circle = new CircleShape();
-        circle.setRadius(0.8f);
+        circle.setRadius(0.45f);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
@@ -47,13 +47,10 @@ public class Enemy {
         circle.dispose();
 
         this.cam = cam;
-        offsetMinX = 5;
-        offsetMaxX = 5;
-        offsetMinY = 5;
-        offsetMaxY = 5;
+        offsetAmount = 5;
     }
 
-    public void render() {
+    public void debugRender() {
         Node child = pathNode;
         sr.setProjectionMatrix(cam.combined);
         sr.begin(ShapeRenderer.ShapeType.Line);
@@ -65,51 +62,29 @@ public class Enemy {
             child = child.getChild();
         }
         sr.end();
-        sr.begin(ShapeRenderer.ShapeType.Filled);
-        sr.setColor(Color.BLUE);
-        sr.rect((int) (getPos().x - 0.5f), (int) (getPos().y + 0.5f), 1, 1);
-        sr.end();
     }
 
     public void update() {
         if (pathNode == null || pathNode.getChild() == null || !new Point(w.getPlayer().getPos()).equals(target)) {
-            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(w.getPlayer().getPos()), w, offsetMinX, offsetMinY, offsetMaxX, offsetMaxY);
+            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(w.getPlayer().getPos()), w, offsetAmount);
             target = new Point(w.getPlayer().getPos());
         }
-        try {
-            //move enemy to next path node
-            if (body.getPosition().dst(pathNode.getPos().toVec()) < 1.2) {
-                pathNode = pathNode.getChild();
+        if (pathNode == null || pathNode.getChild() == null) {
+            if (offsetAmount < 50) {
+                offsetAmount ++;
             }
-            Vector2 targetVec = pathNode.getPos().toVec().sub(body.getPosition());
-            targetVec = new Vector2((targetVec.x - 0.5f) * 100, (targetVec.y + 0.5f) * 100);
-            body.applyForce(targetVec, body.getPosition(), true);
-            if (offsetMinX > 5) {
-                offsetMinX --;
-            }
-            if (offsetMaxX > 5) {
-                offsetMaxX --;
-            }
-            if (offsetMinY > 5) {
-                offsetMinY --;
-            }
-            if (offsetMaxY > 5) {
-                offsetMaxY --;
-            }
-        } catch (NullPointerException e) {
-            if (offsetMinX < 50) {
-                offsetMinX ++;
-            }
-            if (offsetMaxX < 50) {
-                offsetMaxX ++;
-            }
-            if (offsetMinY < 50) {
-                offsetMinY ++;
-            }
-            if (offsetMaxY < 50) {
-                offsetMaxY ++;
-            }
+            return;
         }
+        if (offsetAmount > 5) {
+            offsetAmount --;
+        }
+        //move enemy to next path node
+        if (body.getPosition().dst(pathNode.getPos().toVec()) < 1.2) {
+            pathNode = pathNode.getChild();
+        }
+        Vector2 targetVec = pathNode.getPos().toVec().add(new Vector2(0.5f, 0.5f)).sub(body.getPosition());
+        targetVec.setLength(50);
+        body.applyForce(targetVec, body.getPosition(), true);
     }
 
     public Vector2 getPos() {

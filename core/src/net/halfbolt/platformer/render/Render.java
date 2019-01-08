@@ -1,6 +1,7 @@
 package net.halfbolt.platformer.render;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -21,6 +22,7 @@ public class Render {
     private TileRender tileRender;
     private final int tilesWide = 40;
     private SpriteBatch sb;
+    private Boolean debug = false;
 
     public Render() {
         cam = new OrthographicCamera();
@@ -46,14 +48,15 @@ public class Render {
         sb.setProjectionMatrix(cam.combined);
 
         // For debugging box2d
-        debugRenderer.render(w.getWorld(), cam.combined);
+        if (debug) {
+            debugRenderer.render(w.getWorld(), cam.combined);
+        }
 
         // For levels
         tileRender.render(1, 1);
-
-
-        w.getPlayer().render();
-        w.getEnemy().render();
+        if (debug) {
+            w.getEnemy().debugRender();
+        }
         control.render();
     }
 
@@ -73,6 +76,10 @@ public class Render {
         }
         if (pos.y > Gdx.graphics.getHeight() - borderY) {
             cam.position.set(cam.position.x, cam.position.y - (pos.y - Gdx.graphics.getHeight() + borderY) / div, 0);
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            debug = !debug;
         }
     }
 

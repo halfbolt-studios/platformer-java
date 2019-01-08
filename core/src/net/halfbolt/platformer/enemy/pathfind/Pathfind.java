@@ -10,21 +10,21 @@ import java.util.HashMap;
 
 public class Pathfind {
 
-    public static Node findPath(Point sPos, Point ePos, World w, int offsetMinX, int offsetMaxX, int offsetMinY, int offsetMaxY) {
+    public static Node findPath(Point sPos, Point ePos, World w, int offsetAmount) {
         int minX, minY, maxX, maxY;
         if (ePos.getX() > sPos.getX()) {
-            minX = (sPos.getX() - offsetMinX);
-            maxX = (ePos.getX() + offsetMaxX);
+            minX = (sPos.getX() - offsetAmount);
+            maxX = (ePos.getX() + offsetAmount);
         } else {
-            minX = (ePos.getX() - offsetMinX);
-            maxX = (sPos.getX() + offsetMaxX);
+            minX = (ePos.getX() - offsetAmount);
+            maxX = (sPos.getX() + offsetAmount);
         }
         if (ePos.getY() > sPos.getY()) {
-            minY = (sPos.getY() - offsetMinY);
-            maxY = (ePos.getY() + offsetMaxY);
+            minY = (sPos.getY() - offsetAmount);
+            maxY = (ePos.getY() + offsetAmount);
         } else {
-            minY = (ePos.getY() - offsetMinY);
-            maxY = (sPos.getY() + offsetMaxY);
+            minY = (ePos.getY() - offsetAmount);
+            maxY = (sPos.getY() + offsetAmount);
         }
         //System.out.println("minX: " + minX + ", minY: " + minY + ", maxX: " + maxX + ", maxY: " + maxY);
         return findPath(sPos, ePos, new MapSegment(new Point(minX, minY), new Point(maxX, maxY), w.getTileManager().getMap()));
@@ -45,14 +45,10 @@ public class Pathfind {
                     return node;
                 }
                 ArrayList<Node> extentions = new ArrayList<>();
-                extentions.add(new Node(new Point(node.getPos().getX() - 1, node.getPos().getY() - 1), node));
                 extentions.add(new Node(new Point(node.getPos().getX() - 1, node.getPos().getY()), node));
-                extentions.add(new Node(new Point(node.getPos().getX() - 1, node.getPos().getY() + 1), node));
                 extentions.add(new Node(new Point(node.getPos().getX(), node.getPos().getY() - 1), node));
                 extentions.add(new Node(new Point(node.getPos().getX(), node.getPos().getY() + 1), node));
-                extentions.add(new Node(new Point(node.getPos().getX() + 1, node.getPos().getY() - 1), node));
                 extentions.add(new Node(new Point(node.getPos().getX() + 1, node.getPos().getY()), node));
-                extentions.add(new Node(new Point(node.getPos().getX() + 1, node.getPos().getY() + 1), node));
                 Collections.shuffle(extentions);
                 for (Node extension : extentions) {
                     if (map.inBounds(extension.getPos()) &&
