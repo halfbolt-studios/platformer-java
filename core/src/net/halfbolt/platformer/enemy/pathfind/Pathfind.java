@@ -39,26 +39,35 @@ public class Pathfind {
         tipNodes.add(new Node(ePos.clone()));
         while (tipNodes.size() > 0) {
             ArrayList<Node> newTipNodes = new ArrayList<>();
+            float minLength = Float.MAX_VALUE;
+            Node returnNode = null;
             for (Node node : tipNodes) {
-                // Check if it's the start node (still looking backward)
-                if (node.getPos().equals(sPos)) {
-                    return node;
-                }
-                ArrayList<Node> extentions = new ArrayList<>();
-                extentions.add(new Node(new Point(node.getPos().getX() - 1, node.getPos().getY()), node));
-                extentions.add(new Node(new Point(node.getPos().getX(), node.getPos().getY() - 1), node));
-                extentions.add(new Node(new Point(node.getPos().getX(), node.getPos().getY() + 1), node));
-                extentions.add(new Node(new Point(node.getPos().getX() + 1, node.getPos().getY()), node));
-                Collections.shuffle(extentions);
-                for (Node extension : extentions) {
+                ArrayList<Node> extensions = new ArrayList<>();
+                extensions.add(new Node(new Point(node.getPos().getX() - 1, node.getPos().getY() + 1), node));
+                extensions.add(new Node(new Point(node.getPos().getX() - 1, node.getPos().getY()), node));
+                extensions.add(new Node(new Point(node.getPos().getX() - 1, node.getPos().getY() - 1), node));
+                extensions.add(new Node(new Point(node.getPos().getX(), node.getPos().getY() - 1), node));
+                extensions.add(new Node(new Point(node.getPos().getX(), node.getPos().getY() + 1), node));
+                extensions.add(new Node(new Point(node.getPos().getX() + 1, node.getPos().getY() + 1), node));
+                extensions.add(new Node(new Point(node.getPos().getX() + 1, node.getPos().getY()), node));
+                extensions.add(new Node(new Point(node.getPos().getX() + 1, node.getPos().getY() - 1), node));
+                Collections.shuffle(extensions);
+                for (Node extension : extensions) {
                     if (map.inBounds(extension.getPos()) &&
                             map.get(extension.getPos()) != Type.WALL &&
                             map.get(extension.getPos()) != Type.EXPLORED) {
+                        // Check if it's the start node (still looking backward)
+                        if (extension.getPos().equals(sPos) && extension.getLength() < minLength) {
+                            minLength = extension.getLength();
+                            returnNode = extension;
+                        }
                         newTipNodes.add(extension);
                         map.set(extension.getPos(), Type.EXPLORED);
                     }
                 }
-
+            }
+            if (returnNode != null) {
+                return returnNode;
             }
             tipNodes = newTipNodes;
         }

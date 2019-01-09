@@ -36,7 +36,7 @@ public class Controller {
     }
 
     public Vector2 getMovementDelta() {
-        float speed = 1.7f;
+        float speed = 1.2f;
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             // Mobile
             return new Vector2((float) touchpad.getX() * speed, (float) touchpad.getY() * speed);
@@ -45,18 +45,18 @@ public class Controller {
             int x = 0;
             int y = 0;
             if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-                y -= speed;
+                y -= 1;
             }
             if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-                x -= speed;
+                x -= 1;
             }
             if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-                y += speed;
+                y += 1;
             }
             if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-                x += speed;
+                x += 1;
             }
-            return new Vector2(x, y);
+            return new Vector2(x, y).setLength(speed);
         }
     }
 

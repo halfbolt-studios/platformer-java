@@ -72,4 +72,8 @@ public class Point {
                 ", y=" + y +
                 '}';
     }
+
+    public float dst(Point p) {
+        return toVec().dst(p.toVec());
+    }
 }

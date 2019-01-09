@@ -48,9 +48,9 @@ public class Render {
         sb.setProjectionMatrix(cam.combined);
 
         // For debugging box2d
-        if (debug) {
+//        if (debug) {
             debugRenderer.render(w.getWorld(), cam.combined);
-        }
+//        }
 
         // For levels
         tileRender.render(1, 1);

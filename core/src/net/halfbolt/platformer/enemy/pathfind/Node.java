@@ -22,11 +22,11 @@ public class Node {
         return p;
     }
 
-    public int getLength() {
+    public float getLength() {
         if (child == null) {
             return 0;
         }
-        return child.getLength() + 1;
+        return child.getLength() + child.getPos().dst(p);
     }
 
     public Node getChild() {
@@ -34,7 +34,7 @@ public class Node {
     }
 
     public Node clone() {
-        return new Node(p, child);
+        return new Node(p, child.clone());
     }
 
     @Override
