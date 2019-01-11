@@ -2,7 +2,7 @@ package net.halfbolt.platformer.enemy.pathfind;
 
 import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.world.World;
-import net.halfbolt.platformer.world.collision.tile.Tile;
+import net.halfbolt.platformer.world.tilemap.Layer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +27,7 @@ public class Pathfind {
             maxY = (sPos.getY() + offsetAmount);
         }
         //System.out.println("minX: " + minX + ", minY: " + minY + ", maxX: " + maxX + ", maxY: " + maxY);
-        return findPath(sPos, ePos, new MapSegment(new Point(minX, minY), new Point(maxX, maxY), w.getTileManager().getMap()));
+        return findPath(sPos, ePos, new MapSegment(new Point(minX, minY), new Point(maxX, maxY), w.getMap().getLayer(0)));
     }
 
     private static Node findPath(Point sPos, Point ePos, MapSegment map) {
@@ -78,7 +78,7 @@ public class Pathfind {
         private Point min;
         private Point max;
         private HashMap<Point, Type> map = new HashMap<>();
-        private MapSegment(Point min, Point max, HashMap<Point, Tile> bigMap) {
+        private MapSegment(Point min, Point max, Layer bigMap) {
             this.min = min;
             this.max = max;
             if (min.getX() >= max.getX() || min.getY() >= max.getY()) {

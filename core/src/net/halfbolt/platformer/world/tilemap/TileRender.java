@@ -1,32 +1,31 @@
-package net.halfbolt.platformer.world.display;
+package net.halfbolt.platformer.world.tilemap;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.tilemap.tile.Tile;
 
 public class TileRender {
     private World w;
     private SpriteBatch sb;
-    public TileRender(World w, SpriteBatch sb) {
+    public TileRender(World w, SpriteBatch sb, OrthographicCamera cam) {
         this.w = w;
         this.sb = sb;
     }
 
-    public void render(int i, float tileSize) {
-        TiledMapTileLayer layer = w.getTilemap().getLayer(i);
+    public void render() {
+        Layer layer = w.getTilemap().getLayer(0);
         if (!layer.isVisible()){
             return;
         }
         sb.begin();
         for (int y = 0; y < layer.getHeight(); y++) {
             for (int x = 0; x < layer.getWidth(); x++) {
-                TiledMapTileLayer.Cell cell = layer.getCell(x, layer.getHeight() - y);
-                if (cell != null) {
-                    TiledMapTile tile = cell.getTile();
+                Tile tile = layer.get(x, y);
+                if (tile != null && tile.getID() != -1) {
                     TextureRegion region = tile.getTextureRegion();
-                    sb.draw(region, x * tileSize, y * tileSize, tileSize, tileSize);
+                    sb.draw(region, x, y, 0.5f, 0.5f, 1, 1, 1, 1, tile.getRotation() * 90);
                 }
             }
         }

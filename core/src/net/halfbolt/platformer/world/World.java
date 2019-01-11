@@ -8,22 +8,19 @@ import net.halfbolt.platformer.enemy.Enemy;
 import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Controller;
 import net.halfbolt.platformer.player.Player;
-import net.halfbolt.platformer.world.collision.TileManager;
-import net.halfbolt.platformer.world.display.Tilemap;
+import net.halfbolt.platformer.world.tilemap.Tilemap;
 
 public class World {
     private com.badlogic.gdx.physics.box2d.World w;
     private Player p;
     private Enemy e;
     private Tilemap map;
-    private TileManager manager;
     private Boolean paused = false;
 
     public World(Controller control, OrthographicCamera cam) {
         w = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         p = new Player(this, control);
-        map = new Tilemap("tilemaps/level0.tmx", cam);
-        manager = new TileManager(this);
+        map = new Tilemap(this, "levels/level0");
         e = new Enemy(new Point(10, 10), this, cam);
     }
 
@@ -54,7 +51,7 @@ public class World {
         return map;
     }
 
-    public TileManager getTileManager() {
-        return manager;
+    public Tilemap getMap() {
+        return map;
     }
 }

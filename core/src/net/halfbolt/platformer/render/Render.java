@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import net.halfbolt.platformer.player.Controller;
 import net.halfbolt.platformer.world.World;
-import net.halfbolt.platformer.world.display.TileRender;
+import net.halfbolt.platformer.world.tilemap.TileRender;
 
 public class Render {
     private World w;
@@ -36,7 +36,7 @@ public class Render {
         sb = new SpriteBatch();
         sb.setProjectionMatrix(cam.combined);
 
-        tileRender = new TileRender(w, sb);
+        tileRender = new TileRender(w, sb, cam);
 
         System.out.println(w.getTilemap().getLayer(0).isVisible());
     }
@@ -53,7 +53,7 @@ public class Render {
 //        }
 
         // For levels
-        tileRender.render(1, 1);
+        tileRender.render();
         if (debug) {
             w.getEnemy().debugRender();
         }
@@ -88,6 +88,7 @@ public class Render {
                 tilesWide,
                 tilesWide * ((float) Gdx.graphics.getHeight() / Gdx.graphics.getWidth()));
         batch.setProjectionMatrix(cam.combined);
+        sb.setProjectionMatrix(cam.combined);
     }
 
     public World getWorld() {
