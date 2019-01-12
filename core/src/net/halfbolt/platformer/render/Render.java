@@ -55,6 +55,7 @@ public class Render {
         if (debug) {
             w.getEnemy().debugRender();
         }
+        w.getPlayer().render();
         control.render();
     }
 

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -23,6 +24,7 @@ public class Enemy {
     private ShapeRenderer sr = new ShapeRenderer();
     private OrthographicCamera cam;
     private int offsetAmount;
+    private float hitTimer;
 
     public Enemy(Point pos, World w, OrthographicCamera cam) {
         this.w = w;
@@ -48,6 +50,7 @@ public class Enemy {
 
         this.cam = cam;
         offsetAmount = 5;
+        hitTimer = 0;
     }
 
     public void debugRender() {
@@ -64,7 +67,22 @@ public class Enemy {
         sr.end();
     }
 
+    private void hitPlayer () {
+        hitTimer++;
+        if (hitTimer > 10) {
+            w.getPlayer().health -= MathUtils.random(0.5f, 3);
+            hitTimer = 0;
+        }
+    }
+
     public void update() {
+        //damage player
+        if (getPos().dst(w.getPlayer().getPos()) <= 1.5f) {
+            hitPlayer();
+        } else {
+            hitTimer = 0;
+        }
+        //path finding to get to player
         if (pathNode == null || pathNode.getChild() == null || !new Point(w.getPlayer().getPos()).equals(target)) {
             pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(w.getPlayer().getPos()), w, offsetAmount);
             target = new Point(w.getPlayer().getPos());
