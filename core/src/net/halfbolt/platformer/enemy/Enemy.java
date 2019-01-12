@@ -83,7 +83,7 @@ public class Enemy {
             pathNode = pathNode.getChild();
         }
         Vector2 targetVec = pathNode.getPos().toVec().add(new Vector2(0.5f, 0.5f)).sub(body.getPosition());
-        targetVec.setLength(50);
+        targetVec.setLength(30);
         body.applyForce(targetVec, body.getPosition(), true);
     }
 

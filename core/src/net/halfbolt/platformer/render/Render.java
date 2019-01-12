@@ -20,7 +20,7 @@ public class Render {
     private SpriteBatch batch;
     private Controller control;
     private TileRender tileRender;
-    private final int tilesWide = 40;
+    private final int tilesWide = 20;
     private SpriteBatch sb;
     private Boolean debug = false;
 
