@@ -51,7 +51,6 @@ public class Tile {
 
 
         PolygonShape groundBox = new PolygonShape();
-        System.out.println("Verts: " + verts);
         groundBox.set(verts.toArray(new Vector2[0]));
         body.createFixture(groundBox, 0.0f);
         groundBox.dispose();

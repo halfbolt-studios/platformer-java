@@ -21,7 +21,7 @@ public class World {
         w = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         p = new Player(this, control);
         map = new Tilemap(this, "levels/level0");
-        e = new Enemy(new Point(10, 10), this, cam);
+        e = new Enemy(new Point(5, 5), this, cam);
     }
 
     public void update() {

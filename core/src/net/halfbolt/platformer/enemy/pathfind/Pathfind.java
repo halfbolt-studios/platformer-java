@@ -26,8 +26,27 @@ public class Pathfind {
             minY = (ePos.getY() - offsetAmount);
             maxY = (sPos.getY() + offsetAmount);
         }
+        Layer map = w.getMap().getLayer(1);
+        if (map.get(sPos) == null || (map.get(sPos).getID() != 0 && map.get(sPos).getID() != 1)) {
+            return findPath(sPos, ePos, new MapSegment(new Point(minX, minY), new Point(maxX, maxY), map));
+        }
         //System.out.println("minX: " + minX + ", minY: " + minY + ", maxX: " + maxX + ", maxY: " + maxY);
-        return findPath(sPos, ePos, new MapSegment(new Point(minX, minY), new Point(maxX, maxY), w.getMap().getLayer(0)));
+        ArrayList<Point> extensions = new ArrayList<>();
+        extensions.add(new Point(sPos.getX() - 1, sPos.getY() + 1));
+        extensions.add(new Point(sPos.getX() - 1, sPos.getY()));
+        extensions.add(new Point(sPos.getX() - 1, sPos.getY() - 1));
+        extensions.add(new Point(sPos.getX(), sPos.getY() - 1));
+        extensions.add(new Point(sPos.getX(), sPos.getY() + 1));
+        extensions.add(new Point(sPos.getX() + 1, sPos.getY() + 1));
+        extensions.add(new Point(sPos.getX() + 1, sPos.getY()));
+        extensions.add(new Point(sPos.getX() + 1, sPos.getY() - 1));
+        Collections.shuffle(extensions);
+        for (Point pos : extensions) {
+            if (map.get(pos) == null || (map.get(pos).getID() != 0 && map.get(pos).getID() != 1)) {
+                return findPath(pos, ePos, new MapSegment(new Point(minX, minY), new Point(maxX, maxY), map));
+            }
+        }
+        return null;
     }
 
     private static Node findPath(Point sPos, Point ePos, MapSegment map) {
@@ -87,10 +106,10 @@ public class Pathfind {
             for (int y = min.getY(); y < max.getY(); y++) {
                 for (int x = min.getX(); x < max.getX(); x++) {
                     Point pos = new Point(x, y);
-                    if (bigMap.get(pos) == null) {
-                        map.put(pos, Type.EMPTY);
-                    } else {
+                    if (bigMap.get(pos) != null && (bigMap.get(pos).getID() == 0 || bigMap.get(pos).getID() == 1)) {
                         map.put(pos, Type.WALL);
+                    } else {
+                        map.put(pos, Type.EMPTY);
                     }
                 }
             }
