@@ -22,21 +22,21 @@ public class Tile {
         this.pos = pos;
         ArrayList<Vector2> verts = new ArrayList<>();
         if (id == 0) { // square
-            verts.add(pos.add(new Point(0, 0)).toVec()); verts.add(pos.add(new Point(1, 0)).toVec());
-            verts.add(pos.add(new Point(0, 1)).toVec()); verts.add(pos.add(new Point(1, 1)).toVec());
+            verts.add(new Point(0, 0).toVec()); verts.add(new Point(1, 0).toVec());
+            verts.add(new Point(0, 1).toVec()); verts.add(new Point(1, 1).toVec());
         } else if (id == 1) { // square
             if (rot == 0) {
-                verts.add(pos.add(new Point(0, 0)).toVec());
-                verts.add(pos.add(new Point(0, 1)).toVec()); verts.add(pos.add(new Point(1, 1)).toVec());
+                verts.add(new Point(0, 0).toVec());
+                verts.add(new Point(0, 1).toVec()); verts.add(new Point(1, 1).toVec());
             } else if (rot == 1) {
-                verts.add(pos.add(new Point(0, 0)).toVec()); verts.add(pos.add(new Point(1, 0)).toVec());
-                verts.add(pos.add(new Point(0, 1)).toVec());
+                verts.add(new Point(0, 0).toVec()); verts.add(new Point(1, 0).toVec());
+                verts.add(new Point(0, 1).toVec());
             } else if (rot == 2) {
-                verts.add(pos.add(new Point(0, 0)).toVec()); verts.add(pos.add(new Point(1, 0)).toVec());
-                                                                    verts.add(pos.add(new Point(1, 1)).toVec());
+                verts.add(new Point(0, 0).toVec()); verts.add(new Point(1, 0).toVec());
+                                                                    verts.add(new Point(1, 1).toVec());
             } else if (rot == 3) {
-                                                                    verts.add(pos.add(new Point(1, 0)).toVec());
-                verts.add(pos.add(new Point(0, 1)).toVec()); verts.add(pos.add(new Point(1, 1)).toVec());
+                                                                    verts.add(new Point(1, 0).toVec());
+                verts.add(new Point(0, 1).toVec()); verts.add(new Point(1, 1).toVec());
             } else {
                 throw(new RuntimeException("Rotation of tile invalid! " + rot));
             }
@@ -47,7 +47,7 @@ public class Tile {
         BodyDef groundBodyDef = new BodyDef();
         body = w.getWorld().createBody(groundBodyDef);
         //Divided by 500 to get hitboxes in right place
-        body.setTransform(new Vector2(pos.toVec().x / 500, pos.toVec().y / 500), 0);
+        body.setTransform(new Vector2(pos.getX(), pos.getY()), 0);
 
 
         PolygonShape groundBox = new PolygonShape();
