@@ -14,7 +14,7 @@ public class Player {
     public Player(World w, Controller control) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(new Vector2(2, 5));
+        bodyDef.position.set(new Vector2(5, 15));
 
         body = w.getWorld().createBody(bodyDef);
         body.setLinearDamping(8f);
