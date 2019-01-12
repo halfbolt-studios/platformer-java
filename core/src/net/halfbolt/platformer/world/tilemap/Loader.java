@@ -38,7 +38,7 @@ public class Loader {
         int tileWidth = Integer.parseInt(tilemap.getAttributes().getNamedItem("tilewidth").getNodeValue());
         int tileHeight = Integer.parseInt(tilemap.getAttributes().getNamedItem("tileheight").getNodeValue());
 
-        HashMap<Integer, Layer> layers = new HashMap<>();
+        HashMap<String, Layer> layers = new HashMap<>();
         NodeList layerNodes = tilemap.getElementsByTagName("layer");
         for (int i = 0; i < layerNodes.getLength(); i++) {
             if (layerNodes.item(i).getNodeType() != Node.ELEMENT_NODE) {
@@ -46,7 +46,7 @@ public class Loader {
             }
             Element layerNode = (Element) layerNodes.item(i);
             HashMap<Point, Tile> map = new HashMap<>();
-            int layerNum = Integer.parseInt(layerNode.getAttributes().getNamedItem("number").getTextContent());
+            String layerName = layerNode.getAttributes().getNamedItem("name").getTextContent();
             NodeList tiles = layerNode.getElementsByTagName("tile");
             for (int j = 0; j < tiles.getLength(); j++) {
                 Node tileNode = tiles.item(j);
@@ -67,7 +67,7 @@ public class Loader {
                                 tileset,
                                 Integer.parseInt(tile.getAttributes().getNamedItem("rot").getNodeValue())));
             }
-            layers.put(layerNum, new Layer(width, height, tileWidth, tileHeight, map, true));
+            layers.put(layerName, new Layer(width, height, tileWidth, tileHeight, map, true));
         }
 
         return new Tilemap(width,

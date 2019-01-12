@@ -15,7 +15,7 @@ public class TileRender {
     }
 
     public void render() {
-        Layer layer = w.getTilemap().getLayer(0);
+        Layer layer = w.getTilemap().getLayer("graphics");
         if (!layer.isVisible()){
             return;
         }

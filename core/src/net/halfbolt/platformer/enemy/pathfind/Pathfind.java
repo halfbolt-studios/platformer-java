@@ -26,7 +26,7 @@ public class Pathfind {
             minY = (ePos.getY() - offsetAmount);
             maxY = (sPos.getY() + offsetAmount);
         }
-        Layer map = w.getMap().getLayer(1);
+        Layer map = w.getMap().getLayer("hitboxes");
         if (map.get(sPos) == null || (map.get(sPos).getID() != 0 && map.get(sPos).getID() != 1)) {
             return findPath(sPos, ePos, new MapSegment(new Point(minX, minY), new Point(maxX, maxY), map));
         }

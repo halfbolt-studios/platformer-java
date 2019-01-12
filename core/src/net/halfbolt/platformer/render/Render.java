@@ -37,8 +37,6 @@ public class Render {
         sb.setProjectionMatrix(cam.combined);
 
         tileRender = new TileRender(w, sb, cam);
-
-        System.out.println(w.getTilemap().getLayer(0).isVisible());
     }
 
     public void render() {

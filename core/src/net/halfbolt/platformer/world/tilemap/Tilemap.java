@@ -9,7 +9,7 @@ public class Tilemap {
     private int height;
     private int tileWidth;
     private int tileHeight;
-    private HashMap<Integer, Layer> layers;
+    private HashMap<String, Layer> layers;
     public Tilemap(World w, String filename) {
         Tilemap tilemap = Loader.load(w, filename);
         if (tilemap == null) {
@@ -22,7 +22,7 @@ public class Tilemap {
         this.layers = tilemap.layers;
     }
 
-    Tilemap(int width, int height, int tileWidth, int tileHeight, HashMap<Integer, Layer> layers) {
+    Tilemap(int width, int height, int tileWidth, int tileHeight, HashMap<String, Layer> layers) {
         this.width = width;
         this.height = height;
         this.tileWidth = tileWidth;
@@ -30,8 +30,8 @@ public class Tilemap {
         this.layers = layers;
     }
 
-    public Layer getLayer(int i) {
-        return layers.get(i);
+    public Layer getLayer(String s) {
+        return layers.get(s);
     }
 
     @Override
