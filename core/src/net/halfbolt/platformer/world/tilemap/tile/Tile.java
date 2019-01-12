@@ -46,7 +46,9 @@ public class Tile {
 
         BodyDef groundBodyDef = new BodyDef();
         body = w.getWorld().createBody(groundBodyDef);
-        body.setTransform(pos.toVec(), 0);
+        //Divided by 500 to get hitboxes in right place
+        body.setTransform(new Vector2(pos.toVec().x / 500, pos.toVec().y / 500), 0);
+
 
         PolygonShape groundBox = new PolygonShape();
         System.out.println("Verts: " + verts);

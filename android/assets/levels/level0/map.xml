@@ -1,8 +1,5 @@
 <tilemap tileswide="30" tileshigh="30" tilewidth="32" tileheight="32">
   <layer number="1" name="Layer 0">
-    <tile x="0" y="0" tile="0" rot="0" flipX="false"/>
-    <tile x="1" y="0" tile="0" rot="0" flipX="false"/>
-    <tile x="2" y="0" tile="0" rot="0" flipX="false"/>
     <tile x="3" y="0" tile="0" rot="0" flipX="false"/>
     <tile x="4" y="0" tile="0" rot="0" flipX="false"/>
     <tile x="5" y="0" tile="0" rot="0" flipX="false"/>
@@ -21,6 +18,9 @@
     <tile x="18" y="0" tile="0" rot="0" flipX="false"/>
     <tile x="19" y="0" tile="0" rot="0" flipX="false"/>
     <tile x="20" y="0" tile="0" rot="0" flipX="false"/>
+    <tile x="0" y="0" tile="0" rot="0" flipX="false"/>
+    <tile x="1" y="0" tile="0" rot="0" flipX="false"/>
+    <tile x="2" y="0" tile="0" rot="0" flipX="false"/>
     <tile x="21" y="0" tile="0" rot="0" flipX="false"/>
     <tile x="22" y="0" tile="0" rot="0" flipX="false"/>
     <tile x="23" y="0" tile="0" rot="0" flipX="false"/>
