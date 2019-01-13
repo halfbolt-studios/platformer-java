@@ -2,16 +2,20 @@ package net.halfbolt.platformer.render;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import net.halfbolt.platformer.player.Controller;
 import net.halfbolt.platformer.world.World;
 import net.halfbolt.platformer.world.tilemap.TileRender;
+
+import java.util.ArrayList;
 
 public class Render {
     private World w;
@@ -37,6 +41,22 @@ public class Render {
         sb.setProjectionMatrix(cam.combined);
 
         tileRender = new TileRender(w, sb, cam);
+    }
+
+    public static void drawPolyFilled(ShapeRenderer sr, Vector2 offset, ArrayList<Vector2> verts, Color color) {
+        Vector2 startVert = verts.get(0);
+        verts.remove(0);
+        sr.begin(ShapeRenderer.ShapeType.Filled);
+        sr.setColor(color);
+        for (int i = 0; i < verts.size() - 1; i++) {
+            sr.triangle(startVert.x + offset.x, startVert.y + offset.y,
+                    verts.get(i).x + offset.x, verts.get(i).y + offset.y,
+                    verts.get(i + 1).x + offset.x, verts.get(i + 1).y + offset.y);
+        }
+        sr.triangle(startVert.x + offset.x, startVert.y + offset.y,
+                verts.get(verts.size() - 1).x + offset.x, verts.get(verts.size() - 1).y + offset.y,
+                verts.get(0).x + offset.x, verts.get(0).y + offset.y);
+        sr.end();
     }
 
     public void render() {

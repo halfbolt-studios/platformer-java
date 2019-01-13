@@ -8,7 +8,10 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import net.halfbolt.platformer.render.Render;
 import net.halfbolt.platformer.world.World;
+
+import java.util.ArrayList;
 
 public class Player {
     private Body body;
@@ -44,36 +47,35 @@ public class Player {
 
     public void render() {
         sr.setProjectionMatrix(cam.combined);
-        Heart(sr, new Vector2(getPos().x - 0.5f, getPos().y - 1.2f), 0.4f, 0);
-        Heart(sr, new Vector2(getPos().x, getPos().y - 1.2f), 0.4f, 20);
-        Heart(sr, new Vector2(getPos().x + 0.5f, getPos().y - 1.2f), 0.4f, 40);
+        drawHealth();
+    }
+
+    private void drawHealth() {
+        drawHeart(new Vector2(getPos().x + 0.5f, getPos().y - 1.2f), 0.4f, health < 40);
+        drawHeart(new Vector2(getPos().x, getPos().y - 1.2f), 0.4f, health < 20);
+        drawHeart(new Vector2(getPos().x - 0.5f, getPos().y - 1.2f), 0.4f, health < 0);
     }
 
     //draw hearts for health
-    private void Heart (ShapeRenderer renderer, Vector2 position, float size, float dieAmount) {
-        renderer.begin(ShapeRenderer.ShapeType.Filled);
+    private void drawHeart(Vector2 pos, float size, boolean filled) {
+        Color color;
         //change color based on health
-        if (health <= dieAmount) {
+        if (filled) {
             //grey color
-            renderer.setColor(Color.GRAY);
+            color = Color.GRAY;
         } else {
             //dark red color
-            renderer.setColor(new Color(Color.RED.r * 0.7f, Color.RED.g * 0.7f, Color.RED.b * 0.7f, 1f));
+            color = new Color(Color.RED.r * 0.7f, Color.RED.g * 0.7f, Color.RED.b * 0.7f, 1f);
         }
-        //the position is the center
-        //bottom right
-        renderer.triangle(position.x, position.y - (size / 6f), position.x, position.y + (size / 2), position.x + (size / 2), position.y);
-        //middle right
-        renderer.triangle(position.x, position.y - (size / 6f), position.x + (size / 2), position.y, position.x + (size * (3 / 8f)), position.y - (size / 2));
-        //top right
-        renderer.triangle(position.x, position.y - (size / 6f), position.x + (size * (3 / 8f)), position.y - (size / 2), position.x + (size / 6), position.y - (size / 2));
-        //bottom left
-        renderer.triangle(position.x, position.y - (size / 6f), position.x, position.y + (size / 2), position.x - (size / 2), position.y);
-        //middle left
-        renderer.triangle(position.x, position.y - (size / 6f), position.x - (size / 2), position.y, position.x - (size * (3 / 8f)), position.y - (size / 2));
-        //top left
-        renderer.triangle(position.x, position.y - (size / 6f), position.x - (size * (3 / 8f)), position.y - (size / 2), position.x - (size / 6), position.y - (size / 2));
-        renderer.end();
+        ArrayList<Vector2> verts = new ArrayList<>();
+        verts.add(new Vector2(0,0)); // center (to make the method draw all triangles from here
+        verts.add(new Vector2(size * (0f / 1f), size * (1f / 2f))); // bottom
+        verts.add(new Vector2(size * (7f / 16f), size * (0f / 1f))); // middle right
+        verts.add(new Vector2(size * (1f / 4f), size * (-1f / 2f))); // top right
+        verts.add(new Vector2(size * (0f / 1f), size * (-2f / 8f))); // center
+        verts.add(new Vector2(size * (-1f / 4f), size * (-1f / 2f))); // top left
+        verts.add(new Vector2(size * (-7f / 16f), size * (0f / 1f))); // middle left
+        Render.drawPolyFilled(sr, pos, verts, color);
     }
 
     public void update() {

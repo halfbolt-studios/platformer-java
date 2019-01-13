@@ -2,7 +2,6 @@ package net.halfbolt.platformer.enemy;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -10,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.utils.TimeUtils;
 import net.halfbolt.platformer.enemy.pathfind.Node;
 import net.halfbolt.platformer.enemy.pathfind.Pathfind;
 import net.halfbolt.platformer.helper.Point;
@@ -20,11 +20,12 @@ public class Enemy {
     private Node pathNode;
     private Point target;
     private World w;
-    private Texture tex;
     private ShapeRenderer sr = new ShapeRenderer();
     private OrthographicCamera cam;
     private int offsetAmount;
-    private float hitTimer;
+    private float lastHit;
+    private final float hitTime = 500; // time it takes to hit player in millis
+    private final float speed = 30; // amount of force to apply on the object every frame
 
     public Enemy(Point pos, World w, OrthographicCamera cam) {
         this.w = w;
@@ -50,7 +51,6 @@ public class Enemy {
 
         this.cam = cam;
         offsetAmount = 5;
-        hitTimer = 0;
     }
 
     public void debugRender() {
@@ -68,10 +68,10 @@ public class Enemy {
     }
 
     private void hitPlayer () {
-        hitTimer++;
-        if (hitTimer > 10) {
+        // TODO: animation here
+        if (TimeUtils.millis() - lastHit > hitTime) { // if last hit was half a second ago (or longer)
             w.getPlayer().health -= MathUtils.random(0.5f, 3);
-            hitTimer = 0;
+            lastHit = TimeUtils.millis();
         }
     }
 
@@ -79,8 +79,6 @@ public class Enemy {
         //damage player
         if (getPos().dst(w.getPlayer().getPos()) <= 1.5f) {
             hitPlayer();
-        } else {
-            hitTimer = 0;
         }
         //path finding to get to player
         if (pathNode == null || pathNode.getChild() == null || !new Point(w.getPlayer().getPos()).equals(target)) {
@@ -97,11 +95,11 @@ public class Enemy {
             offsetAmount --;
         }
         //move enemy to next path node
-        if (body.getPosition().dst(pathNode.getPos().toVec()) < 1.2) {
+        if (body.getPosition().dst(pathNode.getPos().toVec()) < 1.5) {
             pathNode = pathNode.getChild();
         }
         Vector2 targetVec = pathNode.getPos().toVec().add(new Vector2(0.5f, 0.5f)).sub(body.getPosition());
-        targetVec.setLength(30);
+        targetVec.setLength(speed);
         body.applyForce(targetVec, body.getPosition(), true);
     }
 
