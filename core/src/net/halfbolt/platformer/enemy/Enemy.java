@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import net.halfbolt.platformer.enemy.pathfind.Node;
 import net.halfbolt.platformer.enemy.pathfind.Pathfind;
 import net.halfbolt.platformer.helper.Point;
+import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.world.World;
 
 public class Enemy {
@@ -67,23 +68,37 @@ public class Enemy {
         sr.end();
     }
 
-    private void hitPlayer () {
+    private void hitPlayer(Player player) {
         // TODO: animation here
         if (TimeUtils.millis() - lastHit > hitTime) { // if last hit was half a second ago (or longer)
-            w.getPlayer().health -= MathUtils.random(0.5f, 3);
+            player.health -= MathUtils.random(0.5f, 3);
             lastHit = TimeUtils.millis();
         }
     }
 
     public void update() {
         //damage player
-        if (getPos().dst(w.getPlayer().getPos()) <= 1.5f) {
-            hitPlayer();
-        }
+        w.getPlayers().forEach((p) -> {
+            if (getPos().dst(p.getPos()) <= 1.5f) {
+                hitPlayer(p);
+            }
+        });
         //path finding to get to player
-        if (pathNode == null || pathNode.getChild() == null || !new Point(w.getPlayer().getPos()).equals(target)) {
-            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(w.getPlayer().getPos()), w, offsetAmount);
-            target = new Point(w.getPlayer().getPos());
+        float minDistance = Float.MAX_VALUE;
+        Player closest = null;
+        for (Player p : w.getPlayers()) {
+            if (p.getPos().dst(getPos()) < minDistance) {
+                closest = p;
+            }
+        }
+        findPath(closest);
+
+    }
+
+    private void findPath(Player p) {
+        if (pathNode == null || pathNode.getChild() == null || !new Point(p.getPos()).equals(target)) {
+            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(p.getPos()), w, offsetAmount);
+            target = new Point(p.getPos());
         }
         if (pathNode == null || pathNode.getChild() == null) {
             if (offsetAmount < 50) {

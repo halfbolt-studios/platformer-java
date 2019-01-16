@@ -1,6 +1,5 @@
 package net.halfbolt.platformer.render;
 
-import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -14,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import net.halfbolt.platformer.player.Controller;
+import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.world.World;
 import net.halfbolt.platformer.world.tilemap.TileRender;
 
@@ -39,10 +39,9 @@ public class Render {
         batch = new SpriteBatch();
 
         control = new Controller();
-        w = new World(control, cam);
+        w = new World(this);
 
-        lights = new RayHandler(w.getWorld());
-        setupLights();
+        w.addPlayer(w.createPlayer());
 
         sb = new SpriteBatch();
         sb.setProjectionMatrix(cam.combined);
@@ -50,11 +49,13 @@ public class Render {
         tileRender = new TileRender(w, sb, cam);
     }
 
-    private void setupLights() {
-        lights.setAmbientLight(0.1f);
-        PointLight light = new PointLight(lights, 300, Color.GRAY, 20, 10, 10);
-        light.attachToBody(w.getPlayer().getBody());
-        light.setSoft(false);
+    public RayHandler getLights() {
+        return lights;
+    }
+
+    public void setupLights() {
+        lights = new RayHandler(w.getWorld());
+        lights.setAmbientLight(new Color(0.075f, 0, 0.25f, 0.5f));
     }
 
     public static void drawPolyFilled(ShapeRenderer sr, Vector2 offset, ArrayList<Vector2> verts, Color color) {
@@ -74,7 +75,7 @@ public class Render {
     }
 
     public void render() {
-        Gdx.gl.glClearColor(.1f, .1f, .2f, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.setProjectionMatrix(cam.combined);
@@ -97,7 +98,7 @@ public class Render {
 
         lights.render();
 
-        w.getPlayer().render();
+        w.getPlayers().forEach(Player::render);
         control.render();
     }
 
@@ -105,7 +106,8 @@ public class Render {
         lights.update();
         float borderX = (float) Gdx.graphics.getWidth() / 2.5f;
         float borderY = (float) Gdx.graphics.getHeight() / 2.5f;
-        Vector3 pos = cam.project(new Vector3(w.getPlayer().getPos().x, w.getPlayer().getPos().y, 0));
+        // TODO: now that we have multiple players, we want the cam to zoom and move to the average of all players
+        Vector3 pos = cam.project(new Vector3(w.getPlayer(0).getPos().x, w.getPlayer(0).getPos().y, 0));
         float div = 200f;
         if (pos.x < borderX) {
             cam.position.set(cam.position.x + (pos.x - borderX) / div, cam.position.y, 0);
@@ -149,5 +151,13 @@ public class Render {
 
     public void touchUp(int x, int y) {
         control.touchUp(x, y);
+    }
+
+    public Controller getControl() {
+        return control;
+    }
+
+    public OrthographicCamera getCamera() {
+        return cam;
     }
 }

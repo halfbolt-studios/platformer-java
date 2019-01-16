@@ -8,19 +8,21 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import net.halfbolt.platformer.player.lantern.Lantern;
 import net.halfbolt.platformer.render.Render;
 import net.halfbolt.platformer.world.World;
 
 import java.util.ArrayList;
 
 public class Player {
+    private Lantern lantern;
     private Body body;
     private Controller control;
     public float health;
     private ShapeRenderer sr = new ShapeRenderer();
     private OrthographicCamera cam;
 
-    public Player(World w, Controller control, OrthographicCamera cam) {
+    public Player(World w) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(new Vector2(5, 15));
@@ -40,13 +42,18 @@ public class Player {
         body.createFixture(fixtureDef);
 
         circle.dispose();
-        this.control = control;
-        this.cam = cam;
+        control = w.getRender().getControl();
+        cam = w.getRender().getCamera();
         health = 60;
+
+        w.getRender().setupLights();
+
+        lantern = new Lantern(w, this);
     }
 
     public void render() {
         sr.setProjectionMatrix(cam.combined);
+        lantern.render();
         drawHealth();
     }
 
@@ -65,7 +72,7 @@ public class Player {
             color = Color.GRAY;
         } else {
             //dark red color
-            color = new Color(Color.RED.r * 0.7f, Color.RED.g * 0.7f, Color.RED.b * 0.7f, 1f);
+            color = new Color(0.7f, 0, 0, 1f);
         }
         ArrayList<Vector2> verts = new ArrayList<>();
         verts.add(new Vector2(0,0)); // center (to make the method draw all triangles from here
