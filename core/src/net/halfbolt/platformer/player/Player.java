@@ -71,9 +71,11 @@ public class Player {
         verts.add(new Vector2(0,0)); // center (to make the method draw all triangles from here
         verts.add(new Vector2(size * (0f / 1f), size * (1f / 2f))); // bottom
         verts.add(new Vector2(size * (7f / 16f), size * (0f / 1f))); // middle right
-        verts.add(new Vector2(size * (1f / 4f), size * (-1f / 2f))); // top right
+        verts.add(new Vector2(size * (3f / 8f), size * (-3f / 8f))); // top right
+        verts.add(new Vector2(size * (1f / 8f), size * (-1f / 2f))); // top right middle
         verts.add(new Vector2(size * (0f / 1f), size * (-2f / 8f))); // center
-        verts.add(new Vector2(size * (-1f / 4f), size * (-1f / 2f))); // top left
+        verts.add(new Vector2(size * (-1f / 8f), size * (-1f / 2f))); // top left
+        verts.add(new Vector2(size * (-3f / 8f), size * (-3f / 8f))); // top left middle
         verts.add(new Vector2(size * (-7f / 16f), size * (0f / 1f))); // middle left
         Render.drawPolyFilled(sr, pos, verts, color);
     }
