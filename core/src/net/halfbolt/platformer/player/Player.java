@@ -87,4 +87,8 @@ public class Player {
     public Vector2 getPos() {
         return body.getPosition();
     }
+
+    public Body getBody() {
+        return body;
+    }
 }

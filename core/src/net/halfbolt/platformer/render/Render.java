@@ -1,5 +1,7 @@
 package net.halfbolt.platformer.render;
 
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -28,6 +30,8 @@ public class Render {
     private SpriteBatch sb;
     private Boolean debug = false;
 
+    private RayHandler lights;
+
     public Render() {
         cam = new OrthographicCamera();
         cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
@@ -37,10 +41,20 @@ public class Render {
         control = new Controller();
         w = new World(control, cam);
 
+        lights = new RayHandler(w.getWorld());
+        setupLights();
+
         sb = new SpriteBatch();
         sb.setProjectionMatrix(cam.combined);
 
         tileRender = new TileRender(w, sb, cam);
+    }
+
+    private void setupLights() {
+        lights.setAmbientLight(0.1f);
+        PointLight light = new PointLight(lights, 300, Color.GRAY, 20, 10, 10);
+        light.attachToBody(w.getPlayer().getBody());
+        light.setSoft(false);
     }
 
     public static void drawPolyFilled(ShapeRenderer sr, Vector2 offset, ArrayList<Vector2> verts, Color color) {
@@ -62,6 +76,11 @@ public class Render {
     public void render() {
         Gdx.gl.glClearColor(.1f, .1f, .2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.setProjectionMatrix(cam.combined);
+        sb.setProjectionMatrix(cam.combined);
+        lights.setCombinedMatrix(cam);
+
         cam.update();
         sb.setProjectionMatrix(cam.combined);
 
@@ -75,11 +94,15 @@ public class Render {
         if (debug) {
             w.getEnemy().debugRender();
         }
+
+        lights.render();
+
         w.getPlayer().render();
         control.render();
     }
 
     public void update() {
+        lights.update();
         float borderX = (float) Gdx.graphics.getWidth() / 2.5f;
         float borderY = (float) Gdx.graphics.getHeight() / 2.5f;
         Vector3 pos = cam.project(new Vector3(w.getPlayer().getPos().x, w.getPlayer().getPos().y, 0));
@@ -106,8 +129,6 @@ public class Render {
         cam.setToOrtho(true,
                 tilesWide,
                 tilesWide * ((float) Gdx.graphics.getHeight() / Gdx.graphics.getWidth()));
-        batch.setProjectionMatrix(cam.combined);
-        sb.setProjectionMatrix(cam.combined);
     }
 
     public World getWorld() {
