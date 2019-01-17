@@ -50,4 +50,8 @@ public class Node {
     public int hashCode() {
         return Objects.hash(p, child);
     }
+
+    public void setChild(Node child) {
+        this.child = child;
+    }
 }

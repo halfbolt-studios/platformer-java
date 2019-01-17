@@ -28,7 +28,14 @@ public class Pathfind {
         }
         Layer map = w.getMap().getLayer("hitboxes");
         if (map.get(sPos) == null || (map.get(sPos).getID() != 0 && map.get(sPos).getID() != 1)) {
-            return findPath(sPos, ePos, new MapSegment(new Point(minX, minY), new Point(maxX, maxY), map));
+            MapSegment segment = new MapSegment(new Point(minX, minY), new Point(maxX, maxY), map);
+
+            Node path = findPath(sPos, ePos, segment);
+            if (path == null){
+                return null;
+            }
+            Pathfind.simplifyPath(path, segment);
+            return path;
         }
         //System.out.println("minX: " + minX + ", minY: " + minY + ", maxX: " + maxX + ", maxY: " + maxY);
         ArrayList<Point> extensions = new ArrayList<>();
@@ -43,10 +50,43 @@ public class Pathfind {
         Collections.shuffle(extensions);
         for (Point pos : extensions) {
             if (map.get(pos) == null || (map.get(pos).getID() != 0 && map.get(pos).getID() != 1)) {
-                return findPath(pos, ePos, new MapSegment(new Point(minX, minY), new Point(maxX, maxY), map));
+                MapSegment segment = new MapSegment(new Point(minX, minY), new Point(maxX, maxY), map);
+
+                Node path = findPath(pos, ePos, segment);
+                if (path == null){
+                    return null;
+                }
+                Pathfind.simplifyPath(path, segment);
+                return path;
             }
         }
         return null;
+    }
+
+    private static void simplifyPath(Node node, MapSegment map) {
+        Node child = node;
+        while (true) {
+            child = child.getChild();
+            if (child == null) {
+                return;
+            }
+            Node newChild = child.getChild();
+            if (newChild == null) {
+                continue;
+            }
+            while (true) {
+                newChild = newChild.getChild();
+                if (newChild == null) {
+                    break;
+                }
+                if (map.isLine(child.getPos(), newChild.getPos())) {
+                    child.setChild(newChild);
+                } else {
+                    break;
+                }
+            }
+
+        }
     }
 
     private static Node findPath(Point sPos, Point ePos, MapSegment map) {
@@ -131,6 +171,11 @@ public class Pathfind {
                 throw new RuntimeException("Position " + pos + " is outside of bounds");
             }
             return map.get(pos);
+        }
+
+        public boolean isLine(Point pos1, Point pos2) {
+            // TODO: actaully implement this, so that we can simplify paths
+            return false;
         }
     }
 
