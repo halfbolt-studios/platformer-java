@@ -1,6 +1,5 @@
 package net.halfbolt.platformer.world.tilemap;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import net.halfbolt.platformer.world.World;
@@ -9,7 +8,7 @@ import net.halfbolt.platformer.world.tilemap.tile.Tile;
 public class TileRender {
     private World w;
     private SpriteBatch sb;
-    public TileRender(World w, SpriteBatch sb, OrthographicCamera cam) {
+    public TileRender(World w, SpriteBatch sb) {
         this.w = w;
         this.sb = sb;
     }

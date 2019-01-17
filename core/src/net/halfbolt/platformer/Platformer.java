@@ -24,6 +24,12 @@ public class Platformer extends ApplicationAdapter {
     }
 
     @Override
+    public void dispose() {
+        world.dispose();
+        render.dispose();
+    }
+
+    @Override
     public void resize(int width, int height) {
         render.resize();
     }

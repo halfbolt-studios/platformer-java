@@ -6,7 +6,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -23,7 +22,6 @@ public class Render {
     private World w;
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     private OrthographicCamera cam;
-    private SpriteBatch batch;
     private Controller control;
     private TileRender tileRender;
     private final int tilesWide = 20;
@@ -36,8 +34,6 @@ public class Render {
         cam = new OrthographicCamera();
         cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
 
-        batch = new SpriteBatch();
-
         control = new Controller();
         w = new World(this);
 
@@ -46,7 +42,7 @@ public class Render {
         sb = new SpriteBatch();
         sb.setProjectionMatrix(cam.combined);
 
-        tileRender = new TileRender(w, sb, cam);
+        tileRender = new TileRender(w, sb);
     }
 
     public RayHandler getLights() {
@@ -78,12 +74,10 @@ public class Render {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        batch.setProjectionMatrix(cam.combined);
         sb.setProjectionMatrix(cam.combined);
         lights.setCombinedMatrix(cam);
 
         cam.update();
-        sb.setProjectionMatrix(cam.combined);
 
         // For debugging box2d
 //        if (debug) {
@@ -137,10 +131,6 @@ public class Render {
         return w;
     }
 
-    private void drawTex(SpriteBatch batch, Texture tex, Vector2 pos, Vector2 size) {
-        batch.draw(tex, pos.x, pos.y, size.x, size.y, 0, 0, tex.getWidth(), tex.getHeight(), false, true);
-    }
-
     public void touchDragged(int x, int y) {
         control.touchDragged(x, y);
     }
@@ -159,5 +149,12 @@ public class Render {
 
     public OrthographicCamera getCamera() {
         return cam;
+    }
+
+    public void dispose() {
+        lights.dispose();
+        sb.dispose();
+        debugRenderer.dispose();
+        control.dispose();
     }
 }

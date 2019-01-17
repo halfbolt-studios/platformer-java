@@ -98,4 +98,10 @@ public class Player {
     public Body getBody() {
         return body;
     }
+
+    public void dispose() {
+        sr.dispose();
+        control.dispose();
+        lantern.dispose();
+    }
 }

@@ -72,4 +72,9 @@ public class World {
     public ArrayList<Player> getPlayers() {
         return players;
     }
+
+    public void dispose() {
+        w.dispose();
+        players.forEach(Player::dispose);
+    }
 }

@@ -13,10 +13,10 @@ public class Touchpad {
     private Vector2 pos;
     private final Vector2 startingPos;
     private double size;
-    private Vector2 knobSize;
+    private float knobSize;
     private final boolean fixedPos = false;
 
-    public Touchpad(SpriteBatch batch, String backgroundPath, String knobPath, Vector2 pos, double size, Vector2 knobSize) {
+    public Touchpad(SpriteBatch batch, String backgroundPath, String knobPath, Vector2 pos, double size, float knobSize) {
         this.batch = batch;
         this.background = new Texture(backgroundPath);
         this.knob = new Texture(knobPath);
@@ -24,7 +24,7 @@ public class Touchpad {
         this.knobPos = pos.cpy();
         this.startingPos = pos.cpy();
         this.size = size;
-        this.knobSize = knobSize.cpy();
+        this.knobSize = knobSize;
     }
 
     public void render() {
@@ -37,7 +37,7 @@ public class Touchpad {
                 false, true);
         batch.draw(knob,
                 knobPos.x, knobPos.y,
-                knobSize.x, knobSize.y,
+                knobSize, knobSize,
                 0, 0,
                 knob.getWidth(), knob.getHeight(),
                 false, true);
@@ -88,5 +88,11 @@ public class Touchpad {
         }
         pos = startingPos.cpy();
         knobPos = pos.cpy();
+    }
+
+    public void dispose() {
+        batch.dispose();
+        background.dispose();
+        knob.dispose();
     }
 }
