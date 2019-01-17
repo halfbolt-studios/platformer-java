@@ -22,7 +22,7 @@ public class Lantern {
     }
 
     public void update() {
-        Vector2 delta = w.getRender().getControl().getLanternDelta(body.getPosition());
+        Vector2 delta = w.getRender().getGui().getControl().getLanternDelta(body.getPosition());
     }
 
     public void render() {

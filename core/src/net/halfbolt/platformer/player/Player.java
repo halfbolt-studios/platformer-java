@@ -42,7 +42,7 @@ public class Player {
         body.createFixture(fixtureDef);
 
         circle.dispose();
-        control = w.getRender().getControl();
+        control = w.getRender().getGui().getControl();
         cam = w.getRender().getCamera();
         health = 60;
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import net.halfbolt.platformer.render.GuiRender;
 
 public class Controller {
     private Touchpad moveTouchpad;
@@ -13,12 +14,9 @@ public class Controller {
     private OrthographicCamera cam;
     private SpriteBatch batch;
 
-    public Controller() {
-        cam = new OrthographicCamera();
-        cam.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        batch = new SpriteBatch();
-        batch.setProjectionMatrix(cam.combined);
+    public Controller(GuiRender gui) {
+        batch = gui.getBatch();
+        cam = gui.getCam();
 
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             moveTouchpad = new Touchpad(batch,
@@ -96,18 +94,21 @@ public class Controller {
     public void touchDragged(int x, int y) {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             moveTouchpad.touchDragged(x, y);
+            lanternTouchpad.touchDragged(x, y);
         }
     }
 
     public void touchDown(int x, int y) {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             moveTouchpad.touchDown(x, y);
+            lanternTouchpad.touchDown(x, y);
         }
     }
 
     public void touchUp(int x, int y) {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             moveTouchpad.touchUp(x, y);
+            lanternTouchpad.touchUp(x, y);
         }
     }
 

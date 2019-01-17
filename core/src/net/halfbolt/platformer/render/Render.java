@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import net.halfbolt.platformer.player.Controller;
 import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.world.World;
 import net.halfbolt.platformer.world.tilemap.TileRender;
@@ -22,11 +21,11 @@ public class Render {
     private World w;
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     private OrthographicCamera cam;
-    private Controller control;
     private TileRender tileRender;
     private final int tilesWide = 20;
     private SpriteBatch sb;
     private Boolean debug = false;
+    private GuiRender gui;
 
     private RayHandler lights;
 
@@ -34,13 +33,13 @@ public class Render {
         cam = new OrthographicCamera();
         cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
 
-        control = new Controller();
+        sb = new SpriteBatch();
+        sb.setProjectionMatrix(cam.combined);
+
+        gui = new GuiRender(this);
         w = new World(this);
 
         w.addPlayer(w.createPlayer());
-
-        sb = new SpriteBatch();
-        sb.setProjectionMatrix(cam.combined);
 
         tileRender = new TileRender(w, sb);
     }
@@ -93,7 +92,7 @@ public class Render {
         lights.render();
 
         w.getPlayers().forEach(Player::render);
-        control.render();
+        gui.render();
     }
 
     public void update() {
@@ -125,6 +124,7 @@ public class Render {
         cam.setToOrtho(true,
                 tilesWide,
                 tilesWide * ((float) Gdx.graphics.getHeight() / Gdx.graphics.getWidth()));
+        gui.resize();
     }
 
     public World getWorld() {
@@ -132,19 +132,15 @@ public class Render {
     }
 
     public void touchDragged(int x, int y) {
-        control.touchDragged(x, y);
+        gui.touchDragged(x, y);
     }
 
     public void touchDown(int x, int y) {
-        control.touchDown(x, y);
+        gui.touchDown(x, y);
     }
 
     public void touchUp(int x, int y) {
-        control.touchUp(x, y);
-    }
-
-    public Controller getControl() {
-        return control;
+        gui.touchUp(x, y);
     }
 
     public OrthographicCamera getCamera() {
@@ -155,6 +151,14 @@ public class Render {
         lights.dispose();
         sb.dispose();
         debugRenderer.dispose();
-        control.dispose();
+        gui.dispose();
+    }
+
+    public SpriteBatch getBatch() {
+        return sb;
+    }
+
+    public GuiRender getGui() {
+        return gui;
     }
 }
