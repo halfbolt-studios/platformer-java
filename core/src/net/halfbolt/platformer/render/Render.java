@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import net.halfbolt.platformer.enemy.Enemy;
 import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.world.World;
@@ -86,7 +87,7 @@ public class Render {
         tileRender.render();
 
         if (debug) {
-            w.getEnemy().debugRender();
+            w.getEnemies().forEach(Enemy::debugRender);
             sr.begin(ShapeRenderer.ShapeType.Filled);
             sr.setColor(0, 1, 0, 1f);
             Point p = new Point(gui.getTileFromCursor());

@@ -1,4 +1,4 @@
-package net.halfbolt.platformer.player;
+package net.halfbolt.platformer.player.controller;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;

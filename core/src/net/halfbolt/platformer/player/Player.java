@@ -8,6 +8,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import net.halfbolt.platformer.player.bow.Bow;
+import net.halfbolt.platformer.player.controller.Controller;
 import net.halfbolt.platformer.player.lantern.Lantern;
 import net.halfbolt.platformer.render.Render;
 import net.halfbolt.platformer.world.World;
@@ -22,6 +24,7 @@ public class Player {
     public float health;
     private ShapeRenderer sr = new ShapeRenderer();
     private OrthographicCamera cam;
+    private Bow bow;
 
     public Player(World w) {
         BodyDef bodyDef = new BodyDef();
@@ -51,18 +54,22 @@ public class Player {
         w.getRender().setupLights();
 
         lantern = new Lantern(w, this);
+
+        bow = new Bow(w, this);
     }
 
     public void render() {
         sr.setProjectionMatrix(cam.combined);
         lantern.render();
+        bow.render();
         drawHealth();
     }
 
     private void drawHealth() {
-        drawHeart(new Vector2(getPos().x + 0.5f, getPos().y - 1.2f), 0.4f, health < 40);
-        drawHeart(new Vector2(getPos().x, getPos().y - 1.2f), 0.4f, health < 20);
-        drawHeart(new Vector2(getPos().x - 0.5f, getPos().y - 1.2f), 0.4f, health < 0);
+        bow.render();
+        drawHeart(new Vector2(getPos().x + 0.5f, getPos().y - 1.5f), 0.4f, health < 40);
+        drawHeart(new Vector2(getPos().x, getPos().y - 1.5f), 0.4f, health < 20);
+        drawHeart(new Vector2(getPos().x - 0.5f, getPos().y - 1.5f), 0.4f, health < 0);
     }
 
     //draw hearts for health
@@ -92,6 +99,7 @@ public class Player {
     public void update() {
         body.setLinearVelocity(body.getLinearVelocity().add(control.getMovementDelta()));
         lantern.update();
+        bow.update();
     }
 
     public Vector2 getPos() {
@@ -106,9 +114,14 @@ public class Player {
         sr.dispose();
         control.dispose();
         lantern.dispose();
+        bow.dispose();
     }
 
     public Lantern getLantern() {
         return lantern;
+    }
+
+    public ShapeRenderer getSR() {
+        return sr;
     }
 }

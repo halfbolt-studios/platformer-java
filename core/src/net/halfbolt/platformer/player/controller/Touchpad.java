@@ -1,4 +1,4 @@
-package net.halfbolt.platformer.player;
+package net.halfbolt.platformer.player.controller;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

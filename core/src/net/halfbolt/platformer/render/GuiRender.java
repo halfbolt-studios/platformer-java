@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import net.halfbolt.platformer.player.Controller;
+import net.halfbolt.platformer.player.controller.Controller;
 
 public class GuiRender {
     private final OrthographicCamera cam;
