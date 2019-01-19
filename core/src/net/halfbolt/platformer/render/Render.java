@@ -89,7 +89,7 @@ public class Render {
             w.getEnemy().debugRender();
             sr.begin(ShapeRenderer.ShapeType.Filled);
             sr.setColor(0, 1, 0, 1f);
-            Point p = gui.getTileFromCursor();
+            Point p = new Point(gui.getTileFromCursor());
             sr.rect(p.getX(), p.getY(), 1, 1);
             sr.end();
         }

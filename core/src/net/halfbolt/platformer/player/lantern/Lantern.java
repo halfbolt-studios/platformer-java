@@ -1,8 +1,10 @@
 package net.halfbolt.platformer.player.lantern;
 
 import box2dLight.PointLight;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -48,7 +50,33 @@ public class Lantern {
     }
 
     public void update() {
-        Vector2 delta = w.getRender().getGui().getControl().getLanternDelta(body.getPosition());
+        Vector2 delta = w.getRender().getGui().getControl().getLanternDelta(getPos());
+        Vector3 screenPos3 = w.getRender().getCamera().project(new Vector3(getPos().x, getPos().y, 0));
+        Vector2 screenPos = new Vector2(screenPos3.x, screenPos3.y);
+        if (screenPos.x < Gdx.graphics.getWidth() / 8f) {
+            delta.add(new Vector2(20f, 0));
+        }
+        if (screenPos.x > Gdx.graphics.getWidth() - Gdx.graphics.getWidth() / 8f) {
+            delta.add(new Vector2(-20f, 0));
+        }
+        if (screenPos.y < Gdx.graphics.getHeight() / 8f) {
+            delta.add(new Vector2(0, -20f));
+        }
+        if (screenPos.y > Gdx.graphics.getHeight() - Gdx.graphics.getHeight() / 8f) {
+            delta.add(new Vector2(0, 20f));
+        }
+        if (screenPos.x < 0) {
+            delta.set(new Vector2(20f, 0));
+        }
+        if (screenPos.x > Gdx.graphics.getWidth()) {
+            delta.set(new Vector2(-20f, 0));
+        }
+        if (screenPos.y < 0) {
+            delta.set(new Vector2(0, -20f));
+        }
+        if (screenPos.y > Gdx.graphics.getHeight()) {
+            delta.set(new Vector2(0, 20f));
+        }
         body.applyForceToCenter(delta, true);
     }
 

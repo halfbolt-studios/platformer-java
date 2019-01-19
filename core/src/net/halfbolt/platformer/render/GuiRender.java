@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Controller;
 
 public class GuiRender {
@@ -28,12 +27,12 @@ public class GuiRender {
         this.render = render;
     }
 
-    public Point getTileFromCursor(Vector2 mousePos) {
+    public Vector2 getTileFromCursor(Vector2 mousePos) {
         Vector3 point = render.getCamera().unproject(new Vector3(mousePos.x, mousePos.y, 0));
-        return new Point((int) point.x, (int) point.y);
+        return new Vector2(point.x, point.y);
     }
 
-    public Point getTileFromCursor() {
+    public Vector2 getTileFromCursor() {
         return getTileFromCursor(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
     }
 

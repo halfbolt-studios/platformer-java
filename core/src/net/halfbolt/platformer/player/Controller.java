@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.render.GuiRender;
 
 public class Controller {
@@ -76,18 +75,29 @@ public class Controller {
         Vector2 delta;
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             // Mobile
-            delta = new Vector2((float) lanternTouchpad.getX(), (float) lanternTouchpad.getY());
-            delta.setLength(delta.len() * 80f);
+            float x, y;
+            if (lanternTouchpad.getX() < 0) {
+                x = (float) -Math.pow(lanternTouchpad.getX(), 2);
+            } else {
+                x = (float) Math.pow(lanternTouchpad.getX(), 2);
+            }
+            if (lanternTouchpad.getY() < 0) {
+                y = (float) -Math.pow(lanternTouchpad.getY(), 2);
+            } else {
+                y = (float) Math.pow(lanternTouchpad.getY(), 2);
+            }
+            delta = new Vector2(x, y);
+            delta.setLength(delta.len() * 40f);
         } else {
             // Desktop
-            Point cursorPos = gui.getTileFromCursor();
-            delta = cursorPos.toVec().sub(pos);
+            Vector2 cursorPos = gui.getTileFromCursor();
+            delta = cursorPos.sub(pos);
             delta.setLength(delta.len() * 20f);
         }
-        if (delta.len() < 200) {
+        if (delta.len() < 40) {
             return delta;
         } else {
-            return delta.setLength(200f);
+            return delta.setLength(40f);
         }
     }
 
