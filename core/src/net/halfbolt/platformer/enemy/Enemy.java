@@ -28,11 +28,16 @@ public class Enemy {
     private int offsetAmount;
     private float lastHit;
     private final float hitTime = 500; // time it takes to hit player in millis
-    private final float speed = 30; // amount of force to apply on the object every frame
+    private float speed = 30; // amount of force to apply on the object every frame
+    private float size = 0.45f;
     private float stunTimer = 0;
+    private String enemyType;
 
-    public Enemy(Point pos, World w, OrthographicCamera cam) {
+    public Enemy(Point pos, String enemyType, World w, OrthographicCamera cam) {
         this.w = w;
+
+        this.enemyType = enemyType;
+        initializeEnemyType();
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -43,7 +48,7 @@ public class Enemy {
         body.setAngularDamping(5f);
 
         CircleShape circle = new CircleShape();
-        circle.setRadius(0.45f);
+        circle.setRadius(size);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
@@ -56,6 +61,24 @@ public class Enemy {
 
         this.cam = cam;
         offsetAmount = 5;
+    }
+
+    //TODO: add more differences for different types of enemies
+    private void initializeEnemyType () {
+        switch (enemyType) {
+            case "AVERAGE":
+                speed = 30;
+                size = 0.5f;
+                break;
+            case "ASSASSIN":
+                speed = 35;
+                size = 0.45f;
+                break;
+            case "HEAVYWEIGHT":
+                speed = 25;
+                size = 0.7f;
+                break;
+        }
     }
 
     public void debugRender() {
@@ -93,6 +116,8 @@ public class Enemy {
         for (Player p : w.getPlayers()) {
             if (p.getLantern().getPos().dst(getPos()) < 2) {
                 stunTimer = 0.5f;
+                //make lantern flash when it stuns enemy
+                p.getLantern().lanternFlash();
             }
             if (p.getPos().dst(getPos()) < minDistance) {
                 closest = p;

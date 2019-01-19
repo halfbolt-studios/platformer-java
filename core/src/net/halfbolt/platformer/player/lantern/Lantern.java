@@ -17,6 +17,9 @@ public class Lantern {
     Player player;
     World w;
     private Body body;
+    private float lightFlashTimer;
+    private float lightDist;
+    private Color lightColor;
 
     public Lantern(World w, Player player) {
         BodyDef bodyDef = new BodyDef();
@@ -41,7 +44,10 @@ public class Lantern {
 
         circle.dispose();
 
-        PointLight light = new PointLight(w.getRender().getLights(), 300, Color.ORANGE, 15, 10, 10);
+        lightFlashTimer = 0;
+        lightDist = 15;
+        lightColor = Color.ORANGE;
+        PointLight light = new PointLight(w.getRender().getLights(), 300, lightColor, lightDist, 10, 10);
         light.attachToBody(body);
         light.setSoft(false);
         this.player = player;
@@ -78,6 +84,10 @@ public class Lantern {
             delta.set(new Vector2(0, 20f));
         }
         body.applyForceToCenter(delta, true);
+    }
+
+    public void lanternFlash () {
+        //TODO: make lantern flash when it stuns an enemy
     }
 
     public void render() {
