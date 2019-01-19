@@ -57,4 +57,8 @@ public class Lantern {
 
     public void dispose() {
     }
+
+    public Vector2 getPos() {
+        return body.getPosition();
+    }
 }

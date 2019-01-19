@@ -1,5 +1,6 @@
 package net.halfbolt.platformer.enemy;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -28,6 +29,7 @@ public class Enemy {
     private float lastHit;
     private final float hitTime = 500; // time it takes to hit player in millis
     private final float speed = 30; // amount of force to apply on the object every frame
+    private float stunTimer = 0;
 
     public Enemy(Point pos, World w, OrthographicCamera cam) {
         this.w = w;
@@ -89,15 +91,25 @@ public class Enemy {
         float minDistance = Float.MAX_VALUE;
         Player closest = null;
         for (Player p : w.getPlayers()) {
+            if (p.getLantern().getPos().dst(getPos()) < 2) {
+                stunTimer = 0.5f;
+            }
             if (p.getPos().dst(getPos()) < minDistance) {
                 closest = p;
             }
         }
         findPath(closest);
-
     }
 
     private void findPath(Player p) {
+        if (stunTimer > 0) {
+            stunTimer -= Gdx.graphics.getDeltaTime();
+            if (stunTimer < 0) {
+                stunTimer = 0;
+            } else {
+                return;
+            }
+        }
         if (pathNode == null || pathNode.getChild() == null || !new Point(p.getPos()).equals(target)) {
             pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(p.getPos()), w, offsetAmount);
             target = new Point(p.getPos());

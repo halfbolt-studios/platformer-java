@@ -107,4 +107,8 @@ public class Player {
         control.dispose();
         lantern.dispose();
     }
+
+    public Lantern getLantern() {
+        return lantern;
+    }
 }

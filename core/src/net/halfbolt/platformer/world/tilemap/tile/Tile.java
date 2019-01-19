@@ -55,7 +55,7 @@ public class Tile {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = groundBox;
         fixtureDef.density = 0.0f;
-        fixtureDef.friction = 0.0f;
+        fixtureDef.friction = 1f;
         fixtureDef.filter.categoryBits = tileBits;
 
         body.createFixture(fixtureDef);
