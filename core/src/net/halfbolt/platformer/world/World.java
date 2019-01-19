@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import net.halfbolt.platformer.enemy.Enemy;
+import net.halfbolt.platformer.enemy.SmallEnemy;
+import net.halfbolt.platformer.enemy.TankEnemy;
 import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.render.Render;
@@ -23,10 +25,10 @@ public class World {
         this.render = render;
         w = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         map = new Tilemap(this, "levels/level0");
-        enemies.add(new Enemy(new Point(8, 15), this));
-        enemies.add(new Enemy(new Point(10, 15), this));
-        enemies.add(new Enemy(new Point(12, 15), this));
-        enemies.add(new Enemy(new Point(14, 15), this));
+        enemies.add(new SmallEnemy(new Point(8, 15), this));
+        enemies.add(new SmallEnemy(new Point(10, 15), this));
+        enemies.add(new SmallEnemy(new Point(12, 15), this));
+        enemies.add(new TankEnemy(new Point(14, 15), this));
     }
 
     public void update() {

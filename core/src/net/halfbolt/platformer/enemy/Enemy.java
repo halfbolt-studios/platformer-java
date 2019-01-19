@@ -21,18 +21,16 @@ public class Enemy {
     private Body body;
     private Node pathNode;
     private Point target;
-    private World w;
+    protected World w;
     private ShapeRenderer sr = new ShapeRenderer();
-    private int offsetAmount;
+    private int offsetAmount = 5;
     private float lastHit;
-    private final float hitTime = 500; // time it takes to hit player in millis
-    private float speed = 30; // amount of force to apply on the object every frame
-    private float size = 0.45f;
+    protected final float hitTime = 500; // time it takes to hit player in millis
+    protected float speed = 30; // amount of force to apply on the object every frame
+    protected float size = 0.45f;
     private float stunTimer = 0;
 
-    public Enemy(Point pos, World w) {
-        this.w = w;
-
+    protected void createBody(Point pos) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(pos.toVec());
@@ -52,8 +50,6 @@ public class Enemy {
 
         body.createFixture(fixtureDef);
         circle.dispose();
-
-        offsetAmount = 5;
     }
 
     public void debugRender() {
@@ -128,7 +124,7 @@ public class Enemy {
             pathNode = pathNode.getChild();
         }
         Vector2 targetVec = pathNode.getPos().toVec().add(new Vector2(0.5f, 0.5f)).sub(body.getPosition());
-        targetVec.setLength(speed);
+        targetVec.setLength(speed * body.getMass());
         body.applyForce(targetVec, body.getPosition(), true);
     }
 
