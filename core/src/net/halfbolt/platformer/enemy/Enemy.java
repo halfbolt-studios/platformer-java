@@ -2,7 +2,6 @@ package net.halfbolt.platformer.enemy;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -24,20 +23,15 @@ public class Enemy {
     private Point target;
     private World w;
     private ShapeRenderer sr = new ShapeRenderer();
-    private OrthographicCamera cam;
     private int offsetAmount;
     private float lastHit;
     private final float hitTime = 500; // time it takes to hit player in millis
     private float speed = 30; // amount of force to apply on the object every frame
     private float size = 0.45f;
     private float stunTimer = 0;
-    private String enemyType;
 
-    public Enemy(Point pos, String enemyType, World w, OrthographicCamera cam) {
+    public Enemy(Point pos, World w) {
         this.w = w;
-
-        this.enemyType = enemyType;
-        initializeEnemyType();
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -59,31 +53,12 @@ public class Enemy {
         body.createFixture(fixtureDef);
         circle.dispose();
 
-        this.cam = cam;
         offsetAmount = 5;
-    }
-
-    //TODO: add more differences for different types of enemies
-    private void initializeEnemyType () {
-        switch (enemyType) {
-            case "AVERAGE":
-                speed = 30;
-                size = 0.5f;
-                break;
-            case "ASSASSIN":
-                speed = 35;
-                size = 0.45f;
-                break;
-            case "HEAVYWEIGHT":
-                speed = 25;
-                size = 0.7f;
-                break;
-        }
     }
 
     public void debugRender() {
         Node child = pathNode;
-        sr.setProjectionMatrix(cam.combined);
+        sr.setProjectionMatrix(w.getRender().getCamera().combined);
         sr.begin(ShapeRenderer.ShapeType.Line);
         while (child != null && child.getChild() != null) {
             sr.setColor(Color.RED);
