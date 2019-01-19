@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class Tile {
     private final TextureRegion region;
     private final int id;
+    public static final short tileBits = 0x0004;
     private Body body;
     private final int rot;
     private final Point pos;
@@ -46,14 +47,18 @@ public class Tile {
 
         BodyDef groundBodyDef = new BodyDef();
         body = w.getWorld().createBody(groundBodyDef);
-        //Divided by 500 to get hit-boxes in right place
         body.setTransform(pos.toVec(), 0);
-        //body.setTransform(new Vector2(pos.toVec()), 0);
-
 
         PolygonShape groundBox = new PolygonShape();
         groundBox.set(verts.toArray(new Vector2[0]));
-        body.createFixture(groundBox, 0.0f);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = groundBox;
+        fixtureDef.density = 0.0f;
+        fixtureDef.friction = 0.0f;
+        fixtureDef.filter.categoryBits = tileBits;
+
+        body.createFixture(fixtureDef);
         groundBox.dispose();
     }
 

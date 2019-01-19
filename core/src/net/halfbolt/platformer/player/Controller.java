@@ -5,7 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.render.GuiRender;
 
 public class Controller {
@@ -13,8 +15,10 @@ public class Controller {
     private Touchpad lanternTouchpad;
     private OrthographicCamera cam;
     private SpriteBatch batch;
+    private GuiRender gui;
 
     public Controller(GuiRender gui) {
+        this.gui = gui;
         batch = gui.getBatch();
         cam = gui.getCam();
 
@@ -24,13 +28,15 @@ public class Controller {
                     "badlogic.jpg",
                     new Vector2(Gdx.graphics.getWidth() / 8f, Gdx.graphics.getHeight() * 0.8f),
                     Gdx.graphics.getWidth() / 6f,
-                    Gdx.graphics.getWidth() / 40f);
+                    Gdx.graphics.getWidth() / 40f,
+                    new Rectangle(0, 0, Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight()));
             lanternTouchpad = new Touchpad(batch,
                     "badlogic.jpg",
                     "badlogic.jpg",
                     new Vector2(Gdx.graphics.getWidth() - Gdx.graphics.getWidth() / 8f, Gdx.graphics.getHeight() * 0.8f),
                     Gdx.graphics.getWidth() / 6f,
-                    Gdx.graphics.getWidth() / 40f);
+                    Gdx.graphics.getWidth() / 40f,
+                    new Rectangle(Gdx.graphics.getWidth() / 2f, 0, Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight()));
         }
     }
 
@@ -67,27 +73,21 @@ public class Controller {
     }
 
     public Vector2 getLanternDelta(Vector2 pos) {
-        float speed = 0.6f;
+        Vector2 delta;
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             // Mobile
-            return new Vector2((float) lanternTouchpad.getX() * speed, (float) lanternTouchpad.getY() * speed);
+            delta = new Vector2((float) lanternTouchpad.getX(), (float) lanternTouchpad.getY());
+            delta.setLength(delta.len() * 80f);
         } else {
             // Desktop
-            int x = 0;
-            int y = 0;
-            if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                y -= 1;
-            }
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                x -= 1;
-            }
-            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                y += 1;
-            }
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                x += 1;
-            }
-            return new Vector2(x, y).setLength(speed);
+            Point cursorPos = gui.getTileFromCursor();
+            delta = cursorPos.toVec().sub(pos);
+            delta.setLength(delta.len() * 20f);
+        }
+        if (delta.len() < 200) {
+            return delta;
+        } else {
+            return delta.setLength(200f);
         }
     }
 

@@ -1,8 +1,8 @@
 package net.halfbolt.platformer.player;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Touchpad {
@@ -15,8 +15,9 @@ public class Touchpad {
     private double size;
     private float knobSize;
     private final boolean fixedPos = false;
+    private Rectangle boundingBox;
 
-    public Touchpad(SpriteBatch batch, String backgroundPath, String knobPath, Vector2 pos, double size, float knobSize) {
+    public Touchpad(SpriteBatch batch, String backgroundPath, String knobPath, Vector2 pos, double size, float knobSize, Rectangle boundingBox) {
         this.batch = batch;
         this.background = new Texture(backgroundPath);
         this.knob = new Texture(knobPath);
@@ -25,6 +26,7 @@ public class Touchpad {
         this.startingPos = pos.cpy();
         this.size = size;
         this.knobSize = knobSize;
+        this.boundingBox = boundingBox;
     }
 
     public void render() {
@@ -53,7 +55,7 @@ public class Touchpad {
     }
 
     public void touchDragged(int x, int y) {
-        if (x > Gdx.graphics.getWidth() / 2) {
+        if (!boundingBox.contains(new Vector2(x, y))) {
             return;
         }
         double angle = Math.atan((x - pos.x) / (y - pos.y));
@@ -73,7 +75,7 @@ public class Touchpad {
     }
 
     public void touchDown(int x, int y) {
-        if (x > Gdx.graphics.getWidth() / 2) {
+        if (!boundingBox.contains(new Vector2(x, y))) {
             return;
         }
         if (!fixedPos) {
@@ -83,7 +85,7 @@ public class Touchpad {
     }
 
     public void touchUp(int x, int y) {
-        if (x > Gdx.graphics.getWidth() / 2) {
+        if (!boundingBox.contains(new Vector2(x, y))) {
             return;
         }
         pos = startingPos.cpy();

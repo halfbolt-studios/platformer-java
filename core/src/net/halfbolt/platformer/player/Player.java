@@ -15,6 +15,7 @@ import net.halfbolt.platformer.world.World;
 import java.util.ArrayList;
 
 public class Player {
+    public static final short playerBits = 0x0001;
     private Lantern lantern;
     private Body body;
     private Controller control;
@@ -38,6 +39,7 @@ public class Player {
         fixtureDef.shape = circle;
         fixtureDef.density = 0.5f;
         fixtureDef.friction = 0.4f;
+        fixtureDef.filter.categoryBits = playerBits;
 
         body.createFixture(fixtureDef);
 
@@ -89,6 +91,7 @@ public class Player {
 
     public void update() {
         body.setLinearVelocity(body.getLinearVelocity().add(control.getMovementDelta()));
+        lantern.update();
     }
 
     public Vector2 getPos() {

@@ -17,6 +17,7 @@ import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.world.World;
 
 public class Enemy {
+    public static final short enemyBits = 0x0002;
     private Body body;
     private Node pathNode;
     private Point target;
@@ -46,6 +47,7 @@ public class Enemy {
         fixtureDef.shape = circle;
         fixtureDef.density = 0.5f;
         fixtureDef.friction = 0.4f;
+        fixtureDef.filter.categoryBits = enemyBits;
 
         body.createFixture(fixtureDef);
         circle.dispose();

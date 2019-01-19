@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.world.World;
 import net.halfbolt.platformer.world.tilemap.TileRender;
@@ -26,6 +27,7 @@ public class Render {
     private SpriteBatch sb;
     private Boolean debug = false;
     private GuiRender gui;
+    private ShapeRenderer sr = new ShapeRenderer();
 
     private RayHandler lights;
 
@@ -74,19 +76,22 @@ public class Render {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         sb.setProjectionMatrix(cam.combined);
+        sr.setProjectionMatrix(cam.combined);
         lights.setCombinedMatrix(cam);
 
         cam.update();
 
-        // For debugging box2d
-//        if (debug) {
-            debugRenderer.render(w.getWorld(), cam.combined);
-//        }
+        debugRenderer.render(w.getWorld(), cam.combined);
 
-        // For levels
         tileRender.render();
+
         if (debug) {
             w.getEnemy().debugRender();
+            sr.begin(ShapeRenderer.ShapeType.Filled);
+            sr.setColor(0, 1, 0, 1f);
+            Point p = gui.getTileFromCursor();
+            sr.rect(p.getX(), p.getY(), 1, 1);
+            sr.end();
         }
 
         lights.render();
@@ -152,6 +157,7 @@ public class Render {
         sb.dispose();
         debugRenderer.dispose();
         gui.dispose();
+        sr.dispose();
     }
 
     public SpriteBatch getBatch() {

@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Controller;
 
 public class GuiRender {
@@ -11,6 +14,7 @@ public class GuiRender {
     private SpriteBatch guiBatch = new SpriteBatch();
     private BitmapFont font = new BitmapFont(true);
     private Controller control;
+    private Render render;
 
     public GuiRender(Render render) {
 
@@ -20,6 +24,17 @@ public class GuiRender {
 
         guiBatch = new SpriteBatch();
         control = new Controller(this);
+
+        this.render = render;
+    }
+
+    public Point getTileFromCursor(Vector2 mousePos) {
+        Vector3 point = render.getCamera().unproject(new Vector3(mousePos.x, mousePos.y, 0));
+        return new Point((int) point.x, (int) point.y);
+    }
+
+    public Point getTileFromCursor() {
+        return getTileFromCursor(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
     }
 
     public void render() {
