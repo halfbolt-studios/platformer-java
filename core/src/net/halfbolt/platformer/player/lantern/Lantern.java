@@ -17,9 +17,6 @@ public class Lantern {
     Player player;
     World w;
     private Body body;
-    private float lightFlashTimer;
-    private float lightDist;
-    private Color lightColor;
 
     public Lantern(World w, Player player) {
         BodyDef bodyDef = new BodyDef();
@@ -44,10 +41,7 @@ public class Lantern {
 
         circle.dispose();
 
-        lightFlashTimer = 0;
-        lightDist = 15;
-        lightColor = Color.ORANGE;
-        PointLight light = new PointLight(w.getRender().getLights(), 300, lightColor, lightDist, 10, 10);
+        PointLight light = new PointLight(w.getRender().getLights(), 300, Color.ORANGE, 15, 10, 10);
         light.attachToBody(body);
         light.setSoft(false);
         this.player = player;

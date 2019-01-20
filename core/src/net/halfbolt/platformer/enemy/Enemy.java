@@ -29,6 +29,15 @@ public class Enemy {
     protected float speed = 30; // amount of force to apply on the object every frame
     protected float size = 0.45f;
     private float stunTimer = 0;
+    protected int maxHealth = 5;
+    private int health = 5;
+    private boolean destroyed = false;
+
+    protected void init(World w, Point pos) {
+        this.w = w;
+        health = maxHealth;
+        createBody(pos);
+    }
 
     protected void createBody(Point pos) {
         BodyDef bodyDef = new BodyDef();
@@ -66,6 +75,23 @@ public class Enemy {
         sr.end();
     }
 
+    public void render() {
+        if (health < maxHealth) {
+            w.getRender().getSR().begin(ShapeRenderer.ShapeType.Filled);
+            w.getRender().getSR().setColor(0.9f, 0.2f, 0, 1);
+            w.getRender().getSR().rect(getPos().x - 0.5f,getPos().y - 1.2f, 1, 0.2f);
+            w.getRender().getSR().setColor(0.1f, 0.75f, 0, 1);
+            w.getRender().getSR().rect(getPos().x - 0.5f,getPos().y - 1.2f, (float) health / maxHealth, 0.2f);
+
+            w.getRender().getSR().setColor(0f, 0f, 0, 1);
+            for (int i = 0; i < maxHealth; i++) {
+                w.getRender().getSR().rect(getPos().x - 0.5f + (float) i / maxHealth - 0.01f,getPos().y - 1.2f,
+                        0.02f, 0.2f);
+            }
+            w.getRender().getSR().end();
+        }
+    }
+
     private void hitPlayer(Player player) {
         // TODO: animation here
         if (TimeUtils.millis() - lastHit > hitTime) { // if last hit was half a second ago (or longer)
@@ -74,7 +100,14 @@ public class Enemy {
         }
     }
 
-    public void update() {
+    public boolean update() {
+        if (destroyed) {
+            return true;
+        }
+        if (health < 0) {
+            destroy();
+            return true;
+        }
         //damage player
         w.getPlayers().forEach((p) -> {
             if (getPos().dst(p.getPos()) <= 1.5f) {
@@ -95,9 +128,18 @@ public class Enemy {
             }
         }
         findPath(closest);
+        return false;
+    }
+
+    private void destroy() {
+        w.getWorld().destroyBody(body);
+        destroyed = true;
     }
 
     private void findPath(Player p) {
+        if (destroyed) {
+            throw new RuntimeException("Calling findPath when destroyed!");
+        }
         if (stunTimer > 0) {
             stunTimer -= Gdx.graphics.getDeltaTime();
             if (stunTimer < 0) {
@@ -129,6 +171,18 @@ public class Enemy {
     }
 
     public Vector2 getPos() {
+        if (destroyed) {
+            throw new RuntimeException("Calling getPos when destroyed!");
+        }
         return body.getPosition();
+    }
+
+    public Body getBody() {
+        return body;
+    }
+
+    public void damage(int damage) {
+        health -= damage;
+        w.getRender().shake();
     }
 }

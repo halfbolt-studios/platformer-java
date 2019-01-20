@@ -45,17 +45,21 @@ public class Bow {
 
     public void render() {
         if (chargeAmount > 0) {
-            p.getSR().begin(ShapeRenderer.ShapeType.Filled);
-            p.getSR().setColor(0.1f, 0.75f, 0, 1);
-            p.getSR().rect(p.getPos().x - 0.5f,p.getPos().y - 1.2f, 1, 0.2f);
-            p.getSR().setColor(0.75f, 0.2f, 0, 1);
-            p.getSR().rect(p.getPos().x - 0.5f,p.getPos().y - 1.2f, chargeAmount, 0.2f);
-            p.getSR().end();
+            w.getRender().getSR().begin(ShapeRenderer.ShapeType.Filled);
+            w.getRender().getSR().setColor(0.1f, 0.75f, 0, 1);
+            w.getRender().getSR().rect(p.getPos().x - 0.5f,p.getPos().y - 1.2f, 1, 0.2f);
+            w.getRender().getSR().setColor(0.75f, 0.2f, 0, 1);
+            w.getRender().getSR().rect(p.getPos().x - 0.5f,p.getPos().y - 1.2f, chargeAmount, 0.2f);
+            w.getRender().getSR().end();
         }
         arrows.forEach(Arrow::render);
     }
 
     public void dispose() {
         arrows.forEach(Arrow::dispose);
+    }
+
+    public ArrayList<Arrow> getArrows() {
+        return arrows;
     }
 }

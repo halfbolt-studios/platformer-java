@@ -2,7 +2,6 @@ package net.halfbolt.platformer.player;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -11,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import net.halfbolt.platformer.player.bow.Bow;
 import net.halfbolt.platformer.player.controller.Controller;
 import net.halfbolt.platformer.player.lantern.Lantern;
-import net.halfbolt.platformer.render.Render;
 import net.halfbolt.platformer.world.World;
 
 import java.util.ArrayList;
@@ -22,9 +20,9 @@ public class Player {
     private Body body;
     private Controller control;
     public float health;
-    private ShapeRenderer sr = new ShapeRenderer();
     private OrthographicCamera cam;
     private Bow bow;
+    private World w;
 
     public Player(World w) {
         BodyDef bodyDef = new BodyDef();
@@ -56,10 +54,11 @@ public class Player {
         lantern = new Lantern(w, this);
 
         bow = new Bow(w, this);
+
+        this.w = w;
     }
 
     public void render() {
-        sr.setProjectionMatrix(cam.combined);
         lantern.render();
         bow.render();
         drawHealth();
@@ -93,7 +92,7 @@ public class Player {
         verts.add(new Vector2(size * (-1f / 8f), size * (-1f / 2f))); // top left
         verts.add(new Vector2(size * (-3f / 8f), size * (-3f / 8f))); // top left middle
         verts.add(new Vector2(size * (-7f / 16f), size * (0f / 1f))); // middle left
-        Render.drawPolyFilled(sr, pos, verts, color);
+        w.getRender().drawPolyFilled(pos, verts, color);
     }
 
     public void update() {
@@ -111,7 +110,6 @@ public class Player {
     }
 
     public void dispose() {
-        sr.dispose();
         control.dispose();
         lantern.dispose();
         bow.dispose();
@@ -121,7 +119,7 @@ public class Player {
         return lantern;
     }
 
-    public ShapeRenderer getSR() {
-        return sr;
+    public Bow getBow() {
+        return bow;
     }
 }

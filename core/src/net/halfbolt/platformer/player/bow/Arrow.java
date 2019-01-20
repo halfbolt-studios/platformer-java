@@ -13,6 +13,9 @@ import net.halfbolt.platformer.world.tilemap.tile.Tile;
 public class Arrow {
     private Body body;
     private World w;
+    protected int damage = 2;
+    private boolean destroyed = false;
+    private boolean needDestroy = false;
 
     public Arrow(World w, Player p, float chargeAmount) {
         BodyDef bodyDef = new BodyDef();
@@ -28,7 +31,7 @@ public class Arrow {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
-        fixtureDef.density = 0.5f;
+        fixtureDef.density = 30f;
         fixtureDef.friction = 0.4f;
         fixtureDef.filter.categoryBits = Player.playerBits;
         fixtureDef.filter.maskBits = Tile.tileBits | Enemy.enemyBits;
@@ -36,15 +39,16 @@ public class Arrow {
         body.createFixture(fixtureDef);
 
         Vector2 delta = w.getRender().getGui().getTileFromCursor().sub(p.getPos());
-        float speed = 3;
+        float speed = 130;
         delta = new Vector2(delta.x * chargeAmount * speed, delta.y * chargeAmount * speed);
         body.applyForceToCenter(delta, true);
         this.w = w;
     }
 
     public boolean update() { // returns true if needs to be destroyed
-        if (!body.isAwake()) {
+        if (!body.isAwake() || needDestroy) {
             w.getWorld().destroyBody(body);
+            destroyed = true;
             return true;
         }
         return false;
@@ -54,5 +58,20 @@ public class Arrow {
     }
 
     public void dispose() {
+    }
+
+    public Body getBody() {
+        return body;
+    }
+
+    public int getDamage() {
+        if (destroyed) {
+            throw new RuntimeException("Calling getDamage when destroyed!");
+        }
+        return (int) (damage + body.getLinearVelocity().len());
+    }
+
+    public void destroy() {
+        needDestroy = true;
     }
 }

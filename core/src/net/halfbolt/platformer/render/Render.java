@@ -31,6 +31,7 @@ public class Render {
     private ShapeRenderer sr = new ShapeRenderer();
 
     private RayHandler lights;
+    private float zoomVel = 0f;
 
     public Render() {
         cam = new OrthographicCamera();
@@ -56,7 +57,7 @@ public class Render {
         lights.setAmbientLight(new Color(0.075f, 0, 0.25f, 0.5f));
     }
 
-    public static void drawPolyFilled(ShapeRenderer sr, Vector2 offset, ArrayList<Vector2> verts, Color color) {
+    public void drawPolyFilled(Vector2 offset, ArrayList<Vector2> verts, Color color) {
         Vector2 startVert = verts.get(0);
         verts.remove(0);
         sr.begin(ShapeRenderer.ShapeType.Filled);
@@ -85,6 +86,7 @@ public class Render {
         debugRenderer.render(w.getWorld(), cam.combined);
 
         tileRender.render();
+        w.getEnemies().forEach(Enemy::render);
 
         if (debug) {
             w.getEnemies().forEach(Enemy::debugRender);
@@ -99,6 +101,15 @@ public class Render {
 
         w.getPlayers().forEach(Player::render);
         gui.render();
+
+        cam.zoom += Gdx.graphics.getDeltaTime() * zoomVel;
+        if (cam.zoom < .99f) {
+            zoomVel = 1;
+        }
+        if (cam.zoom > 1) {
+            zoomVel = 0;
+            cam.zoom = 1;
+        }
     }
 
     public void update() {
@@ -167,5 +178,13 @@ public class Render {
 
     public GuiRender getGui() {
         return gui;
+    }
+
+    public ShapeRenderer getSR() {
+        return sr;
+    }
+
+    public void shake() {
+        zoomVel = -1f;
     }
 }
