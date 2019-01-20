@@ -23,17 +23,17 @@ public class InputHandler implements InputProcessor {
     }
 
     public boolean touchDown(int x, int y, int pointer, int button) {
-        render.touchDown(x, y);
+        render.touchDown(x, y, pointer);
         return false;
     }
 
     public boolean touchUp(int x, int y, int pointer, int button) {
-        render.touchUp(x, y);
+        render.touchUp(x, y, pointer);
         return false;
     }
 
     public boolean touchDragged(int x, int y, int pointer) {
-        render.touchDragged(x, y);
+        render.touchDragged(x, y, pointer);
         return false;
     }
 

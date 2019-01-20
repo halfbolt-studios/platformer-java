@@ -38,7 +38,6 @@ public class World {
         w.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
-                System.out.println("Contact!");
                 Enemy enemy = null;
                 for (Enemy e : enemies) {
                     if (e.getBody().equals(contact.getFixtureA().getBody())) {

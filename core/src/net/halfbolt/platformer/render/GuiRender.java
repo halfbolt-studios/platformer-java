@@ -36,6 +36,10 @@ public class GuiRender {
         return getTileFromCursor(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
     }
 
+    public Vector2 getTileFromCursor(int cursor) {
+        return getTileFromCursor(new Vector2(Gdx.input.getX(cursor), Gdx.input.getY(cursor)));
+    }
+
     public void render() {
         guiBatch.setProjectionMatrix(cam.combined);
         guiBatch.begin();
@@ -50,16 +54,16 @@ public class GuiRender {
         control.dispose();
     }
 
-    public void touchUp(int x, int y) {
-        control.touchUp(x, y);
+    public void touchUp(int x, int y, int cursor) {
+        control.touchUp(x, y, cursor);
     }
 
-    public void touchDown(int x, int y) {
-        control.touchDown(x, y);
+    public void touchDown(int x, int y, int cursor) {
+        control.touchDown(x, y, cursor);
     }
 
-    public void touchDragged(int x, int y) {
-        control.touchDragged(x, y);
+    public void touchDragged(int x, int y, int cursor) {
+        control.touchDragged(x, y, cursor);
     }
 
     public Controller getControl() {
@@ -77,4 +81,5 @@ public class GuiRender {
     public void resize() {
         cam.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
+
 }

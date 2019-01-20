@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Touchpad {
     private SpriteBatch batch;
-    private Texture background;
-    private Texture knob;
+    private Texture backgroundTex;
+    private Texture knobTex;
     private Vector2 knobPos;
     private Vector2 pos;
     private final Vector2 startingPos;
@@ -16,11 +16,12 @@ public class Touchpad {
     private float knobSize;
     private final boolean fixedPos = false;
     private Rectangle boundingBox;
+    private int cursor = -1;
 
     public Touchpad(SpriteBatch batch, String backgroundPath, String knobPath, Vector2 pos, double size, float knobSize, Rectangle boundingBox) {
         this.batch = batch;
-        this.background = new Texture(backgroundPath);
-        this.knob = new Texture(knobPath);
+        this.backgroundTex = new Texture(backgroundPath);
+        this.knobTex = new Texture(knobPath);
         this.pos = pos.cpy();
         this.knobPos = pos.cpy();
         this.startingPos = pos.cpy();
@@ -31,17 +32,17 @@ public class Touchpad {
 
     public void render() {
         batch.begin();
-        batch.draw(background,
+        batch.draw(backgroundTex,
                 (float) (pos.x - size / 2), (float) (pos.y - size / 2),
                 (float) size, (float) size,
                 0, 0,
-                background.getWidth(), background.getHeight(),
+                backgroundTex.getWidth(), backgroundTex.getHeight(),
                 false, true);
-        batch.draw(knob,
+        batch.draw(knobTex,
                 knobPos.x, knobPos.y,
                 knobSize, knobSize,
                 0, 0,
-                knob.getWidth(), knob.getHeight(),
+                knobTex.getWidth(), knobTex.getHeight(),
                 false, true);
         batch.end();
     }
@@ -54,7 +55,10 @@ public class Touchpad {
         return (knobPos.y - pos.y) / size * 2;
     }
 
-    public void touchDragged(int x, int y) {
+    public void touchDragged(int x, int y, int cursor) {
+        if (this.cursor != cursor) {
+            return;
+        }
         if (!boundingBox.contains(new Vector2(x, y))) {
             return;
         }
@@ -74,18 +78,25 @@ public class Touchpad {
         }
     }
 
-    public void touchDown(int x, int y) {
+    public void touchDown(int x, int y, int cursor) {
+        if (this.cursor != -1) {
+            return;
+        }
         if (!boundingBox.contains(new Vector2(x, y))) {
             return;
         }
+        System.out.println("Touch down, with cursor " + cursor + ", and x " + x + ", y " + y);
+        this.cursor = cursor;
         if (!fixedPos) {
             pos.x = x;
             pos.y = y;
         }
     }
 
-    public void touchUp(int x, int y) {
-        if (!boundingBox.contains(new Vector2(x, y))) {
+    public void touchUp(int x, int y, int cursor) {
+        if (this.cursor == cursor) {
+            this.cursor = -1;
+        } else {
             return;
         }
         pos = startingPos.cpy();
@@ -93,8 +104,11 @@ public class Touchpad {
     }
 
     public void dispose() {
-        batch.dispose();
-        background.dispose();
-        knob.dispose();
+        backgroundTex.dispose();
+        knobTex.dispose();
+    }
+
+    public int getCursor() {
+        return cursor;
     }
 }

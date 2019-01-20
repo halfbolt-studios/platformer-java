@@ -3,23 +3,24 @@ package net.halfbolt.platformer.player.controller;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import net.halfbolt.platformer.render.GuiRender;
 
 public class Controller {
     private Touchpad moveTouchpad;
-    private Touchpad lanternTouchpad;
-    private OrthographicCamera cam;
+    private Button bowButton;
     private SpriteBatch batch;
     private GuiRender gui;
+    private Vector2 lanternTarget;
 
     public Controller(GuiRender gui) {
         this.gui = gui;
         batch = gui.getBatch();
-        cam = gui.getCam();
 
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             moveTouchpad = new Touchpad(batch,
@@ -28,21 +29,21 @@ public class Controller {
                     new Vector2(Gdx.graphics.getWidth() / 8f, Gdx.graphics.getHeight() * 0.8f),
                     Gdx.graphics.getWidth() / 6f,
                     Gdx.graphics.getWidth() / 40f,
-                    new Rectangle(0, 0, Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight()));
-            lanternTouchpad = new Touchpad(batch,
-                    "badlogic.jpg",
-                    "badlogic.jpg",
-                    new Vector2(Gdx.graphics.getWidth() - Gdx.graphics.getWidth() / 8f, Gdx.graphics.getHeight() * 0.8f),
-                    Gdx.graphics.getWidth() / 6f,
-                    Gdx.graphics.getWidth() / 40f,
-                    new Rectangle(Gdx.graphics.getWidth() / 2f, 0, Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight()));
+                    new Rectangle(0, Gdx.graphics.getHeight() / 2f, Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight()));
+            ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+            style.up = new TextureRegionDrawable(new Texture("badlogic.jpg"));
+            style.down = new TextureRegionDrawable(new Texture("badlogic.jpg"));
+            style.checked = new TextureRegionDrawable(new Texture("badlogic.jpg"));
+            bowButton = new Button(style);
         }
     }
 
     public void render() {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             moveTouchpad.render();
-            lanternTouchpad.render();
+            batch.begin();
+            bowButton.draw(batch, 1);
+            batch.end();
         }
     }
 
@@ -75,25 +76,17 @@ public class Controller {
         Vector2 delta;
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             // Mobile
-            float x, y;
-            if (lanternTouchpad.getX() < 0) {
-                x = (float) -Math.pow(lanternTouchpad.getX(), 2);
-            } else {
-                x = (float) Math.pow(lanternTouchpad.getX(), 2);
-            }
-            if (lanternTouchpad.getY() < 0) {
-                y = (float) -Math.pow(lanternTouchpad.getY(), 2);
-            } else {
-                y = (float) Math.pow(lanternTouchpad.getY(), 2);
-            }
-            delta = new Vector2(x, y);
-            delta.setLength(delta.len() * 40f);
         } else {
             // Desktop
-            Vector2 cursorPos = gui.getTileFromCursor();
-            delta = cursorPos.sub(pos);
-            delta.setLength(delta.len() * 20f);
+            if (Gdx.input.isButtonPressed(1)) {
+                lanternTarget = gui.getTileFromCursor();
+            }
         }
+        if (lanternTarget == null) {
+            return new Vector2();
+        }
+        delta = lanternTarget.cpy().sub(pos);
+        delta.setLength(delta.len() * 20f);
         if (delta.len() < 40) {
             return delta;
         } else {
@@ -101,31 +94,31 @@ public class Controller {
         }
     }
 
-    public void touchDragged(int x, int y) {
+    public void touchDragged(int x, int y, int cursor) {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
-            moveTouchpad.touchDragged(x, y);
-            lanternTouchpad.touchDragged(x, y);
+            moveTouchpad.touchDragged(x, y, cursor);
         }
     }
 
-    public void touchDown(int x, int y) {
+    public void touchDown(int x, int y, int cursor) {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
-            moveTouchpad.touchDown(x, y);
-            lanternTouchpad.touchDown(x, y);
+            moveTouchpad.touchDown(x, y, cursor);
+            if (moveTouchpad.getCursor() != cursor) {
+                lanternTarget = gui.getTileFromCursor(cursor);
+            }
         }
+
     }
 
-    public void touchUp(int x, int y) {
+    public void touchUp(int x, int y, int cursor) {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
-            moveTouchpad.touchUp(x, y);
-            lanternTouchpad.touchUp(x, y);
+            moveTouchpad.touchUp(x, y, cursor);
         }
     }
 
     public void dispose() {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             moveTouchpad.dispose();
-            lanternTouchpad.dispose();
         }
     }
 }

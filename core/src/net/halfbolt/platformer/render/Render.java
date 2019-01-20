@@ -148,16 +148,16 @@ public class Render {
         return w;
     }
 
-    public void touchDragged(int x, int y) {
-        gui.touchDragged(x, y);
+    public void touchDragged(int x, int y, int cursor) {
+        gui.touchDragged(x, y, cursor);
     }
 
-    public void touchDown(int x, int y) {
-        gui.touchDown(x, y);
+    public void touchDown(int x, int y, int cursor) {
+        gui.touchDown(x, y, cursor);
     }
 
-    public void touchUp(int x, int y) {
-        gui.touchUp(x, y);
+    public void touchUp(int x, int y, int cursor) {
+        gui.touchUp(x, y, cursor);
     }
 
     public OrthographicCamera getCamera() {
