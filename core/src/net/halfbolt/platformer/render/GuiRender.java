@@ -22,7 +22,7 @@ public class GuiRender {
         guiBatch.setProjectionMatrix(cam.combined);
 
         guiBatch = new SpriteBatch();
-        control = new Controller(this);
+        control = new Controller(render.getWorld(), this);
 
         this.render = render;
     }

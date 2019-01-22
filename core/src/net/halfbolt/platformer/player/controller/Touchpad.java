@@ -59,9 +59,6 @@ public class Touchpad {
         if (this.cursor != cursor) {
             return;
         }
-        if (!boundingBox.contains(new Vector2(x, y))) {
-            return;
-        }
         double angle = Math.atan((x - pos.x) / (y - pos.y));
         double dist = Math.sqrt(Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2));
         if (dist < size / 2) {

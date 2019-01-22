@@ -19,7 +19,7 @@ public class Bow {
     }
 
     public void update() {
-        if (Gdx.input.isButtonPressed(0)) {
+        if (w.getRender().getGui().getControl().getBowPressed()) {
             chargeAmount += Gdx.graphics.getDeltaTime();
             if (chargeAmount > 1) {
                 chargeAmount = 1;

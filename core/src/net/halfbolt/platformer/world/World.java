@@ -149,4 +149,16 @@ public class World {
         w.dispose();
         players.forEach(Player::dispose);
     }
+
+    public Enemy getClosetEnemy(Vector2 pos) {
+        float closestDist = Float.MAX_VALUE;
+        Enemy closest = null;
+        for (Enemy e : enemies) {
+            if (pos.dst(e.getPos()) < closestDist) {
+                closest = e;
+                closestDist = pos.dst(e.getPos());
+            }
+        }
+        return closest;
+    }
 }

@@ -7,19 +7,25 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import net.halfbolt.platformer.enemy.Enemy;
+import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.render.GuiRender;
+import net.halfbolt.platformer.world.World;
 
 public class Controller {
+    private final World w;
     private Touchpad moveTouchpad;
     private Button bowButton;
     private SpriteBatch batch;
     private GuiRender gui;
     private Vector2 lanternTarget;
 
-    public Controller(GuiRender gui) {
+    public Controller(World w, GuiRender gui) {
         this.gui = gui;
+        this.w = w;
         batch = gui.getBatch();
 
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
@@ -35,6 +41,9 @@ public class Controller {
             style.down = new TextureRegionDrawable(new Texture("badlogic.jpg"));
             style.checked = new TextureRegionDrawable(new Texture("badlogic.jpg"));
             bowButton = new Button(style);
+            bowButton.setWidth(Gdx.graphics.getWidth() / 8f);
+            bowButton.setHeight(Gdx.graphics.getWidth() / 8f);
+            bowButton.setPosition(Gdx.graphics.getWidth() - Gdx.graphics.getWidth() * (3f / 16), Gdx.graphics.getHeight() - Gdx.graphics.getWidth() * (3f / 16));
         }
     }
 
@@ -44,6 +53,23 @@ public class Controller {
             batch.begin();
             bowButton.draw(batch, 1);
             batch.end();
+        }
+    }
+
+    public boolean getBowPressed() {
+        if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
+            return bowButton.isPressed();
+        } else {
+            return Gdx.input.isButtonPressed(0);
+        }
+    }
+
+    public Vector2 getBowTarget(Player p) {
+        if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
+            Enemy closet = w.getClosetEnemy(p.getPos());
+            return closet.getPos();
+        } else {
+            return new Vector2(Gdx.input.getX(), Gdx.input.getY());
         }
     }
 
@@ -97,12 +123,14 @@ public class Controller {
     public void touchDragged(int x, int y, int cursor) {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             moveTouchpad.touchDragged(x, y, cursor);
+            bowButton.getClickListener().touchDragged(new InputEvent(), x, y, cursor);
         }
     }
 
     public void touchDown(int x, int y, int cursor) {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             moveTouchpad.touchDown(x, y, cursor);
+            bowButton.getClickListener().touchDown(new InputEvent(), x, y, cursor, 0);
             if (moveTouchpad.getCursor() != cursor) {
                 lanternTarget = gui.getTileFromCursor(cursor);
             }
@@ -113,6 +141,7 @@ public class Controller {
     public void touchUp(int x, int y, int cursor) {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             moveTouchpad.touchUp(x, y, cursor);
+            bowButton.getClickListener().touchUp(new InputEvent(), x, y, cursor, 0);
         }
     }
 

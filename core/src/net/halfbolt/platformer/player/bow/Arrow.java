@@ -38,7 +38,7 @@ public class Arrow {
 
         body.createFixture(fixtureDef);
 
-        Vector2 delta = w.getRender().getGui().getTileFromCursor().sub(p.getPos());
+        Vector2 delta = w.getRender().getGui().getControl().getBowTarget(p);
         float speed = 130;
         delta = new Vector2(delta.x * chargeAmount * speed, delta.y * chargeAmount * speed);
         body.applyForceToCenter(delta, true);
