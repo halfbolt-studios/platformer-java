@@ -1,13 +1,13 @@
 package net.halfbolt.platformer.enemy;
 
 import net.halfbolt.platformer.helper.Point;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.Level;
 
 public class SmallEnemy extends Enemy {
-    public SmallEnemy(World w, Point pos) {
+    public SmallEnemy(Level l, Point pos) {
         size = 0.3f;
         speed = 120;
         maxHealth = 5;
-        init(w, pos);
+        init(l, pos);
     }
 }

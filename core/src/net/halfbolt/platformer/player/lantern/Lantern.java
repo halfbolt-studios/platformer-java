@@ -10,15 +10,15 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import net.halfbolt.platformer.player.Player;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.LevelManager;
 import net.halfbolt.platformer.world.tilemap.tile.Tile;
 
 public class Lantern {
-    Player player;
-    World w;
+    private Player player;
+    private LevelManager w;
     private Body body;
 
-    public Lantern(World w, Player player) {
+    public Lantern(LevelManager w, Player player) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(player.getPos());

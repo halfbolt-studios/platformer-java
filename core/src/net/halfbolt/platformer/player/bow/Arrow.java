@@ -7,22 +7,22 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import net.halfbolt.platformer.enemy.Enemy;
 import net.halfbolt.platformer.player.Player;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.LevelManager;
 import net.halfbolt.platformer.world.tilemap.tile.Tile;
 
 public class Arrow {
     private Body body;
-    private World w;
+    private LevelManager manager;
     protected int damage = 2;
     private boolean destroyed = false;
     private boolean needDestroy = false;
 
-    public Arrow(World w, Player p, float chargeAmount) {
+    public Arrow(LevelManager manager, Player p, float chargeAmount) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(p.getPos());
 
-        body = w.getWorld().createBody(bodyDef);
+        body = manager.getWorld().createBody(bodyDef);
         body.setLinearDamping(1f);
         body.setAngularDamping(5f);
 
@@ -38,16 +38,16 @@ public class Arrow {
 
         body.createFixture(fixtureDef);
 
-        Vector2 delta = w.getRender().getGui().getControl().getBowTarget(p);
+        Vector2 target = manager.getRender().getGui().getControl().getBowTarget(p).sub(p.getPos());
         float speed = 130;
-        delta = new Vector2(delta.x * chargeAmount * speed, delta.y * chargeAmount * speed);
+        Vector2 delta = new Vector2(target.x * chargeAmount * speed, target.y * chargeAmount * speed);
         body.applyForceToCenter(delta, true);
-        this.w = w;
+        this.manager = manager;
     }
 
     public boolean update() { // returns true if needs to be destroyed
         if (!body.isAwake() || needDestroy) {
-            w.getWorld().destroyBody(body);
+            manager.getWorld().destroyBody(body);
             destroyed = true;
             return true;
         }

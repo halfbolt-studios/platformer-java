@@ -1,7 +1,6 @@
 package net.halfbolt.platformer.enemy.pathfind;
 
 import net.halfbolt.platformer.helper.Point;
-import net.halfbolt.platformer.world.World;
 import net.halfbolt.platformer.world.tilemap.Layer;
 
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.HashMap;
 
 public class Pathfind {
 
-    public static Node findPath(Point sPos, Point ePos, World w, int offsetAmount) {
+    public static Node findPath(Point sPos, Point ePos, net.halfbolt.platformer.world.MapSegment w, int offsetAmount) {
         int minX, minY, maxX, maxY;
         if (ePos.getX() > sPos.getX()) {
             minX = (sPos.getX() - offsetAmount);

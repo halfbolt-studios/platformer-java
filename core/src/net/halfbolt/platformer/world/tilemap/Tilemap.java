@@ -1,6 +1,6 @@
 package net.halfbolt.platformer.world.tilemap;
 
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.MapSegment;
 
 import java.util.HashMap;
 
@@ -10,7 +10,7 @@ public class Tilemap {
     private int tileWidth;
     private int tileHeight;
     private HashMap<String, Layer> layers;
-    public Tilemap(World w, String filename) {
+    public Tilemap(MapSegment w, String filename) {
         Tilemap tilemap = Loader.load(w, filename);
         if (tilemap == null) {
             throw(new RuntimeException("Tilemap is null"));

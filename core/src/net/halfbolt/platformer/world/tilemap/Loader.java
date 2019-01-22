@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import net.halfbolt.platformer.helper.Point;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.MapSegment;
 import net.halfbolt.platformer.world.tilemap.tile.Tile;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -18,7 +18,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 
 public class Loader {
-    public static Tilemap load(World w, String filename) {
+    public static Tilemap load(MapSegment w, String filename) {
         Texture tileset = new Texture(filename + "/tex.png");
         String file = Gdx.files.internal(filename + "/map.xml").readString();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -77,7 +77,7 @@ public class Loader {
                 layers);
     }
 
-    private static Tile createTile(World w, Point pos, int width, int height, int tileWidth, int tileHeight, int tileID, Texture tileset, int rot) {
+    private static Tile createTile(MapSegment w, Point pos, int width, int height, int tileWidth, int tileHeight, int tileID, Texture tileset, int rot) {
         TextureRegion region = new TextureRegion(tileset, tileID % 8 * tileWidth, tileID / 8 * tileHeight, tileWidth, tileHeight);
         region.flip(false, true);
         return new Tile(w, pos, region, tileID, rot);

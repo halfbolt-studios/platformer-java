@@ -14,14 +14,14 @@ import net.halfbolt.platformer.enemy.pathfind.Node;
 import net.halfbolt.platformer.enemy.pathfind.Pathfind;
 import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Player;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.Level;
 
 public class Enemy {
     public static final short enemyBits = 0x0002;
     private Body body;
     private Node pathNode;
     private Point target;
-    protected World w;
+    protected Level level;
     private ShapeRenderer sr = new ShapeRenderer();
     private int offsetAmount = 5;
     private float lastHit;
@@ -33,8 +33,8 @@ public class Enemy {
     private int health = 5;
     private boolean destroyed = false;
 
-    protected void init(World w, Point pos) {
-        this.w = w;
+    protected void init(Level w, Point pos) {
+        this.level = w;
         health = maxHealth;
         createBody(pos);
     }
@@ -44,7 +44,7 @@ public class Enemy {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(pos.toVec());
 
-        body = w.getWorld().createBody(bodyDef);
+        body = level.getWorld().createBody(bodyDef);
         body.setLinearDamping(30f);
         body.setAngularDamping(5f);
 
@@ -63,7 +63,7 @@ public class Enemy {
 
     public void debugRender() {
         Node child = pathNode;
-        sr.setProjectionMatrix(w.getRender().getCamera().combined);
+        sr.setProjectionMatrix(level.getRender().getCamera().combined);
         sr.begin(ShapeRenderer.ShapeType.Line);
         while (child != null && child.getChild() != null) {
             sr.setColor(Color.RED);
@@ -77,18 +77,18 @@ public class Enemy {
 
     public void render() {
         if (health < maxHealth) {
-            w.getRender().getSR().begin(ShapeRenderer.ShapeType.Filled);
-            w.getRender().getSR().setColor(0.9f, 0.2f, 0, 1);
-            w.getRender().getSR().rect(getPos().x - 0.5f,getPos().y - 1.2f, 1, 0.2f);
-            w.getRender().getSR().setColor(0.1f, 0.75f, 0, 1);
-            w.getRender().getSR().rect(getPos().x - 0.5f,getPos().y - 1.2f, (float) health / maxHealth, 0.2f);
+            level.getRender().getSR().begin(ShapeRenderer.ShapeType.Filled);
+            level.getRender().getSR().setColor(0.9f, 0.2f, 0, 1);
+            level.getRender().getSR().rect(getPos().x - 0.5f,getPos().y - 1.2f, 1, 0.2f);
+            level.getRender().getSR().setColor(0.1f, 0.75f, 0, 1);
+            level.getRender().getSR().rect(getPos().x - 0.5f,getPos().y - 1.2f, (float) health / maxHealth, 0.2f);
 
-            w.getRender().getSR().setColor(0f, 0f, 0, 1);
+            level.getRender().getSR().setColor(0f, 0f, 0, 1);
             for (int i = 0; i < maxHealth; i++) {
-                w.getRender().getSR().rect(getPos().x - 0.5f + (float) i / maxHealth - 0.01f,getPos().y - 1.2f,
+                level.getRender().getSR().rect(getPos().x - 0.5f + (float) i / maxHealth - 0.01f,getPos().y - 1.2f,
                         0.02f, 0.2f);
             }
-            w.getRender().getSR().end();
+            level.getRender().getSR().end();
         }
     }
 
@@ -109,15 +109,15 @@ public class Enemy {
             return true;
         }
         //damage player
-        w.getPlayers().forEach((p) -> {
+        level.getLevelManager().getPlayers().forEach((p) -> {
             if (getPos().dst(p.getPos()) <= 1.5f) {
                 hitPlayer(p);
             }
         });
-        //path finding to get to player
+        //path finding to getSegment to player
         float minDistance = Float.MAX_VALUE;
         Player closest = null;
-        for (Player p : w.getPlayers()) {
+        for (Player p : level.getLevelManager().getPlayers()) {
             if (p.getLantern().getPos().dst(getPos()) < 2) {
                 stunTimer = 0.5f;
                 //make lantern flash when it stuns enemy
@@ -132,7 +132,8 @@ public class Enemy {
     }
 
     private void destroy() {
-        w.getWorld().destroyBody(body);
+        dispose();
+        level.getWorld().destroyBody(body);
         destroyed = true;
     }
 
@@ -148,8 +149,8 @@ public class Enemy {
                 return;
             }
         }
-        if (pathNode == null || pathNode.getChild() == null || !new Point(p.getPos()).equals(target)) {
-            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(p.getPos()), w, offsetAmount);
+        if (pathNode == null || pathNode.getChild() == null || !new Point(p.getPos()).equals(target)) { // TODO: change it to get correct segment
+            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(p.getPos()), level.getSegment(new Point(0,0)), offsetAmount);
             target = new Point(p.getPos());
         }
         if (pathNode == null || pathNode.getChild() == null) {
@@ -183,6 +184,10 @@ public class Enemy {
 
     public void damage(int damage) {
         health -= damage;
-        w.getRender().shake();
+        level.getRender().shake();
+    }
+
+    public void dispose() {
+        sr.dispose();
     }
 }

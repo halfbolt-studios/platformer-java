@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import net.halfbolt.platformer.player.bow.Bow;
 import net.halfbolt.platformer.player.controller.Controller;
 import net.halfbolt.platformer.player.lantern.Lantern;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.LevelManager;
 
 import java.util.ArrayList;
 
@@ -22,9 +22,10 @@ public class Player {
     public float health;
     private OrthographicCamera cam;
     private Bow bow;
-    private World w;
+    private LevelManager manager;
 
-    public Player(World w) {
+    public Player(LevelManager w) {
+        this.manager = w;
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(new Vector2(5, 15));
@@ -55,7 +56,6 @@ public class Player {
 
         bow = new Bow(w, this);
 
-        this.w = w;
     }
 
     public void render() {
@@ -92,7 +92,7 @@ public class Player {
         verts.add(new Vector2(size * (-1f / 8f), size * (-1f / 2f))); // top left
         verts.add(new Vector2(size * (-3f / 8f), size * (-3f / 8f))); // top left middle
         verts.add(new Vector2(size * (-7f / 16f), size * (0f / 1f))); // middle left
-        w.getRender().drawPolyFilled(pos, verts, color);
+        manager.getRender().drawPolyFilled(pos, verts, color);
     }
 
     public void update() {

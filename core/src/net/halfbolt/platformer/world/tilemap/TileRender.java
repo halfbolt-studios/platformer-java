@@ -2,19 +2,20 @@ package net.halfbolt.platformer.world.tilemap;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.helper.Point;
+import net.halfbolt.platformer.world.LevelManager;
 import net.halfbolt.platformer.world.tilemap.tile.Tile;
 
 public class TileRender {
-    private World w;
+    private LevelManager manager;
     private SpriteBatch sb;
-    public TileRender(World w, SpriteBatch sb) {
-        this.w = w;
+    public TileRender(LevelManager manager, SpriteBatch sb) {
+        this.manager = manager;
         this.sb = sb;
     }
 
     public void render() {
-        Layer layer = w.getTilemap().getLayer("graphics");
+        Layer layer = manager.getCurrentLevel().getSegment(new Point(0, 0)).getTilemap().getLayer("graphics");
         if (!layer.isVisible()){
             return;
         }

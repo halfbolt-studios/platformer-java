@@ -3,7 +3,7 @@ package net.halfbolt.platformer.player.bow;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import net.halfbolt.platformer.player.Player;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.LevelManager;
 
 import java.util.ArrayList;
 
@@ -11,9 +11,9 @@ public class Bow {
     private final Player p;
     private float chargeAmount = 0;
     private ArrayList<Arrow> arrows = new ArrayList<>();
-    private final World w;
+    private final LevelManager w;
 
-    public Bow(World w, Player p) {
+    public Bow(LevelManager w, Player p) {
         this.w = w;
         this.p = p;
     }

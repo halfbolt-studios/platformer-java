@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import net.halfbolt.platformer.helper.Point;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.MapSegment;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ public class Tile {
     private final int rot;
     private final Point pos;
 
-    public Tile(World w, Point pos, TextureRegion region, int id, int rot) {
+    public Tile(MapSegment w, Point pos, TextureRegion region, int id, int rot) {
         this.region = region;
         this.id = id;
         this.rot = rot;

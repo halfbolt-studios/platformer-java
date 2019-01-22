@@ -5,41 +5,39 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import net.halfbolt.platformer.enemy.Enemy;
-import net.halfbolt.platformer.enemy.SmallEnemy;
-import net.halfbolt.platformer.enemy.TankEnemy;
-import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.player.bow.Arrow;
 import net.halfbolt.platformer.render.Render;
-import net.halfbolt.platformer.world.tilemap.Tilemap;
 
 import java.util.ArrayList;
 
-public class World {
-    private com.badlogic.gdx.physics.box2d.World w;
+public class LevelManager {
+    private ArrayList<Level> levels = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
-    private ArrayList<Enemy> enemies = new ArrayList<>();
-    private Tilemap map;
-    private Boolean paused = false;
+    private World box2dWorld;
+    private int currentLevel = 0;
+    private boolean paused = false;
     private Render render;
 
-    public World(Render render) {
-        this.render = render;
-        w = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
-        map = new Tilemap(this, "levels/level0");
-        enemies.add(new SmallEnemy(this, new Point(8, 15)));
-        enemies.add(new SmallEnemy(this, new Point(10, 15)));
-        enemies.add(new SmallEnemy(this, new Point(12, 15)));
-        enemies.add(new TankEnemy(this, new Point(14, 15)));
+    public LevelManager(Render r) {
+        this.render = r;
+        box2dWorld = new World(new Vector2(0, 0), true);
+
+        levels.add(new Level(r, "", box2dWorld, this));
+
         setupCallback();
     }
 
+    public void addPlayer(Player p) {
+        players.add(p);
+    }
+
     private void setupCallback() {
-        w.setContactListener(new ContactListener() {
+        box2dWorld.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
                 Enemy enemy = null;
-                for (Enemy e : enemies) {
+                for (Enemy e : getCurrentLevel().getEnemies()) {
                     if (e.getBody().equals(contact.getFixtureA().getBody())) {
                         enemy = e;
                         break;
@@ -90,75 +88,61 @@ public class World {
         });
     }
 
+
     public void update() {
         if (!paused) {
-            w.step(Gdx.graphics.getDeltaTime(), 6, 2);
+            box2dWorld.step(Gdx.graphics.getDeltaTime(), 6, 2);
             players.forEach(Player::update);
-            ArrayList<Enemy> remove = new ArrayList<>();
-            for (Enemy e : enemies) {
-                if (e.update()) {
-                    remove.add(e);
-                }
-            }
-            for (Enemy e : remove) {
-                enemies.remove(e);
-            }
+            getCurrentLevel().update();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             paused = !paused;
         }
     }
 
-    public com.badlogic.gdx.physics.box2d.World getWorld() {
-        return w;
-    }
-
-    public Player getPlayer(int i) {
-        return players.get(i);
-    }
-
-    public ArrayList<Enemy> getEnemies() {
-        return enemies;
-    }
-
-    public Tilemap getTilemap() {
-        return map;
-    }
-
-    public Tilemap getMap() {
-        return map;
-    }
-
-    public Render getRender() {
-        return render;
-    }
-
     public Player createPlayer() {
         return new Player(this);
     }
 
-    public void addPlayer(Player player) {
-        players.add(player);
+    public Level get(int i) {
+        return levels.get(i);
+    }
+
+    public World getWorld() {
+        return box2dWorld;
+    }
+
+    public Level getCurrentLevel() {
+        return levels.get(currentLevel);
     }
 
     public ArrayList<Player> getPlayers() {
         return players;
     }
 
-    public void dispose() {
-        w.dispose();
-        players.forEach(Player::dispose);
+    public Player getPlayer(int i) {
+        return players.get(i);
     }
+
 
     public Enemy getClosetEnemy(Vector2 pos) {
         float closestDist = Float.MAX_VALUE;
         Enemy closest = null;
-        for (Enemy e : enemies) {
+        for (Enemy e : getCurrentLevel().getEnemies()) {
             if (pos.dst(e.getPos()) < closestDist) {
                 closest = e;
                 closestDist = pos.dst(e.getPos());
             }
         }
         return closest;
+    }
+
+    public void dispose() {
+        players.forEach(Player::dispose);
+        levels.forEach(Level::dispose);
+    }
+
+    public Render getRender() {
+        return render;
     }
 }

@@ -14,13 +14,13 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import net.halfbolt.platformer.enemy.Enemy;
 import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Player;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.LevelManager;
 import net.halfbolt.platformer.world.tilemap.TileRender;
 
 import java.util.ArrayList;
 
 public class Render {
-    private World w;
+    private LevelManager levelManager;
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     private OrthographicCamera cam;
     private TileRender tileRender;
@@ -40,12 +40,12 @@ public class Render {
         sb = new SpriteBatch();
         sb.setProjectionMatrix(cam.combined);
 
+        levelManager = new LevelManager(this);
         gui = new GuiRender(this);
-        w = new World(this);
 
-        w.addPlayer(w.createPlayer());
+        levelManager.addPlayer(levelManager.createPlayer());
 
-        tileRender = new TileRender(w, sb);
+        tileRender = new TileRender(levelManager, sb);
     }
 
     public RayHandler getLights() {
@@ -53,7 +53,7 @@ public class Render {
     }
 
     public void setupLights() {
-        lights = new RayHandler(w.getWorld());
+        lights = new RayHandler(levelManager.getWorld());
         lights.setAmbientLight(new Color(0.075f, 0, 0.25f, 0.5f));
     }
 
@@ -83,13 +83,13 @@ public class Render {
 
         cam.update();
 
-        debugRenderer.render(w.getWorld(), cam.combined);
+        debugRenderer.render(levelManager.getWorld(), cam.combined);
 
         tileRender.render();
-        w.getEnemies().forEach(Enemy::render);
+        levelManager.getCurrentLevel().getEnemies().forEach(Enemy::render);
 
         if (debug) {
-            w.getEnemies().forEach(Enemy::debugRender);
+            levelManager.getCurrentLevel().getEnemies().forEach(Enemy::debugRender);
             sr.begin(ShapeRenderer.ShapeType.Filled);
             sr.setColor(0, 1, 0, 1f);
             Point p = new Point(gui.getTileFromCursor());
@@ -99,7 +99,7 @@ public class Render {
 
         lights.render();
 
-        w.getPlayers().forEach(Player::render);
+        levelManager.getPlayers().forEach(Player::render);
         gui.render();
 
         cam.zoom += Gdx.graphics.getDeltaTime() * zoomVel;
@@ -117,7 +117,7 @@ public class Render {
         float borderX = (float) Gdx.graphics.getWidth() / 2.5f;
         float borderY = (float) Gdx.graphics.getHeight() / 2.5f;
         // TODO: now that we have multiple players, we want the cam to zoom and move to the average of all players
-        Vector3 pos = cam.project(new Vector3(w.getPlayer(0).getPos().x, w.getPlayer(0).getPos().y, 0));
+        Vector3 pos = cam.project(new Vector3(levelManager.getPlayer(0).getPos().x, levelManager.getPlayer(0).getPos().y, 0));
         float div = 200f;
         if (pos.x < borderX) {
             cam.position.set(cam.position.x + (pos.x - borderX) / div, cam.position.y, 0);
@@ -142,10 +142,6 @@ public class Render {
                 tilesWide,
                 tilesWide * ((float) Gdx.graphics.getHeight() / Gdx.graphics.getWidth()));
         gui.resize();
-    }
-
-    public World getWorld() {
-        return w;
     }
 
     public void touchDragged(int x, int y, int cursor) {
@@ -186,5 +182,9 @@ public class Render {
 
     public void shake() {
         zoomVel = -1f;
+    }
+
+    public LevelManager getManager() {
+        return levelManager;
     }
 }

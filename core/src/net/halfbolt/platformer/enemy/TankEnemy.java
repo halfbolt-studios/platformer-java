@@ -1,13 +1,13 @@
 package net.halfbolt.platformer.enemy;
 
 import net.halfbolt.platformer.helper.Point;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.Level;
 
 public class TankEnemy extends Enemy {
-    public TankEnemy(World w, Point pos) {
+    public TankEnemy(Level l, Point pos) {
         size = 1f;
         speed = 60;
         maxHealth = 20;
-        init(w, pos);
+        init(l, pos);
     }
 }

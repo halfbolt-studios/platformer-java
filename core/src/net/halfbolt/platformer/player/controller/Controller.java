@@ -8,24 +8,25 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import net.halfbolt.platformer.enemy.Enemy;
 import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.render.GuiRender;
-import net.halfbolt.platformer.world.World;
+import net.halfbolt.platformer.world.LevelManager;
 
 public class Controller {
-    private final World w;
+    private final LevelManager manager;
     private Touchpad moveTouchpad;
     private Button bowButton;
     private SpriteBatch batch;
     private GuiRender gui;
     private Vector2 lanternTarget;
 
-    public Controller(World w, GuiRender gui) {
+    public Controller(LevelManager manager, GuiRender gui) {
         this.gui = gui;
-        this.w = w;
+        this.manager = manager;
         batch = gui.getBatch();
 
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
@@ -66,10 +67,10 @@ public class Controller {
 
     public Vector2 getBowTarget(Player p) {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
-            Enemy closet = w.getClosetEnemy(p.getPos());
+            Enemy closet = manager.getClosetEnemy(p.getPos());
             return closet.getPos();
         } else {
-            return new Vector2(Gdx.input.getX(), Gdx.input.getY());
+            return manager.getRender().getGui().getTileFromCursor();
         }
     }
 
