@@ -48,7 +48,7 @@ public class Bow {
 
     public void render() {
         Vector2 target = w.getRender().getGui().getControl().getBowTarget(p);
-        float speed = 10;
+        float speed = 8;
         Vector2 delta = new Vector2(target.x * chargeAmount * speed, target.y * chargeAmount * speed);
 
         if (chargeAmount > 0) {

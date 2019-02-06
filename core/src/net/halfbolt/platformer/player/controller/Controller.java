@@ -88,12 +88,12 @@ public class Controller {
             Enemy closest = manager.getClosetEnemy(p.getPos());
                 //auto-aim
                 if (closest != null && bowButton.autoAim() && bowProjection.equals(new Vector2())) {
-                    return new Vector2((closest.getPos().x - p.getPos().x) / 7f, (closest.getPos().y - p.getPos().y) / 7f);
+                    return new Vector2((closest.getPos().x - p.getPos().x) / 8f, (closest.getPos().y - p.getPos().y) / 8f);
                 }
                 //manual aim
                 return new Vector2(bowProjection);
         } else {
-            return manager.getRender().getGui().getTileFromCursor();
+            return new Vector2((manager.getRender().getGui().getTileFromCursor().x - p.getPos().x) / 8f, (manager.getRender().getGui().getTileFromCursor().y - p.getPos().y) / 8f);
         }
     }
 

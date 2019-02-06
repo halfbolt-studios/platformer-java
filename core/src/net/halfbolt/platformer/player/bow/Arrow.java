@@ -13,7 +13,7 @@ import net.halfbolt.platformer.world.tilemap.tile.Tile;
 public class Arrow {
     private Body body;
     private LevelManager manager;
-    protected int damage = 1;
+    protected int damage = 0;
     private boolean destroyed = false;
     private boolean needDestroy = false;
 
