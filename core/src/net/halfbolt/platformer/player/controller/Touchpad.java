@@ -31,6 +31,7 @@ public class Touchpad {
     }
 
     public void render() {
+        //System.out.println(knobPos.dst(startingPos) > 10);
         batch.begin();
         batch.draw(backgroundTex,
                 (float) (pos.x - size / 2), (float) (pos.y - size / 2),
@@ -98,6 +99,15 @@ public class Touchpad {
         }
         pos = startingPos.cpy();
         knobPos = pos.cpy();
+    }
+
+    public boolean isPressed () {
+        return (knobPos.dst(startingPos) > 10);
+    }
+
+    //for bow button, check if player is auto-aiming or not
+    public boolean autoAim () {
+        return (knobPos.dst(pos) < 20);
     }
 
     public void dispose() {

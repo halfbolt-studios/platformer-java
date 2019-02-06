@@ -2,6 +2,7 @@ package net.halfbolt.platformer.player.bow;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.world.LevelManager;
 
@@ -19,6 +20,7 @@ public class Bow {
     }
 
     public void update() {
+        //System.out.println(autoAim);
         if (w.getRender().getGui().getControl().getBowPressed()) {
             chargeAmount += Gdx.graphics.getDeltaTime();
             if (chargeAmount > 1) {
@@ -27,6 +29,7 @@ public class Bow {
         } else {
             if (chargeAmount > 0) {
                 fireArrow();
+                w.getRender().getGui().getControl().bowProjection = new Vector2();
             }
             chargeAmount = 0;
         }
@@ -44,10 +47,15 @@ public class Bow {
     }
 
     public void render() {
+        Vector2 target = w.getRender().getGui().getControl().getBowTarget(p);
+        float speed = 10;
+        Vector2 delta = new Vector2(target.x * chargeAmount * speed, target.y * chargeAmount * speed);
+
         if (chargeAmount > 0) {
             w.getRender().getSR().begin(ShapeRenderer.ShapeType.Filled);
             w.getRender().getSR().setColor(0.1f, 0.75f, 0, 1);
             w.getRender().getSR().rect(p.getPos().x - 0.5f,p.getPos().y - 1.2f, 1, 0.2f);
+            w.getRender().getSR().rectLine(p.getPos().x, p.getPos().y, p.getPos().x + delta.x, p.getPos().y + delta.y, 0.5f);
             w.getRender().getSR().setColor(0.75f, 0.2f, 0, 1);
             w.getRender().getSR().rect(p.getPos().x - 0.5f,p.getPos().y - 1.2f, chargeAmount, 0.2f);
             w.getRender().getSR().end();

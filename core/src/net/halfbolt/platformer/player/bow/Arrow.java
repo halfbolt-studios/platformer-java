@@ -13,7 +13,7 @@ import net.halfbolt.platformer.world.tilemap.tile.Tile;
 public class Arrow {
     private Body body;
     private LevelManager manager;
-    protected int damage = 2;
+    protected int damage = 1;
     private boolean destroyed = false;
     private boolean needDestroy = false;
 
@@ -38,10 +38,11 @@ public class Arrow {
 
         body.createFixture(fixtureDef);
 
-        Vector2 target = manager.getRender().getGui().getControl().getBowTarget(p).sub(p.getPos());
-        float speed = 130;
-        Vector2 delta = new Vector2(target.x * chargeAmount * speed, target.y * chargeAmount * speed);
-        body.applyForceToCenter(delta, true);
+        //get velocity of aim controller
+            Vector2 target = manager.getRender().getGui().getControl().getBowTarget(p);
+            float speed = 20;
+            Vector2 delta = new Vector2(target.x * chargeAmount * speed, target.y * chargeAmount * speed);
+            body.setLinearVelocity(body.getLinearVelocity().add(delta));
         this.manager = manager;
     }
 
