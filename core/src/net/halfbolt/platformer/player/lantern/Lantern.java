@@ -53,6 +53,38 @@ public class Lantern {
         Vector2 delta = w.getRender().getGui().getControl().getLanternDelta(getPos());
         Vector3 screenPos3 = w.getRender().getCamera().project(new Vector3(getPos().x, getPos().y, 0));
         Vector2 screenPos = new Vector2(screenPos3.x, screenPos3.y);
+        if (w.getRender().getGui().getControl().bowButton != null) {
+            if (!w.getRender().getGui().getControl().bowButton.inBounds(w.getRender().getGui().touchPos) && !w.getRender().getGui().getControl().moveTouchpad.inBounds(w.getRender().getGui().touchPos)) {
+                if (screenPos.x < 0) {
+                    delta.set(new Vector2(20f, 0));
+                }
+                if (screenPos.x > Gdx.graphics.getWidth()) {
+                    delta.set(new Vector2(-20f, 0));
+                }
+                if (screenPos.y < 0) {
+                    delta.set(new Vector2(0, -20f));
+                }
+                if (screenPos.y > Gdx.graphics.getHeight()) {
+                    delta.set(new Vector2(0, 20f));
+                }
+            } else {
+                delta = new Vector2();
+            }
+        } else {
+            if (screenPos.x < 0) {
+                delta.set(new Vector2(20f, 0));
+            }
+            if (screenPos.x > Gdx.graphics.getWidth()) {
+                delta.set(new Vector2(-20f, 0));
+            }
+            if (screenPos.y < 0) {
+                delta.set(new Vector2(0, -20f));
+            }
+            if (screenPos.y > Gdx.graphics.getHeight()) {
+                delta.set(new Vector2(0, 20f));
+            }
+        }
+        //stop lantern from going off screen
         if (screenPos.x < Gdx.graphics.getWidth() / 8f) {
             delta.add(new Vector2(20f, 0));
         }
@@ -65,18 +97,7 @@ public class Lantern {
         if (screenPos.y > Gdx.graphics.getHeight() - Gdx.graphics.getHeight() / 8f) {
             delta.add(new Vector2(0, 20f));
         }
-        if (screenPos.x < 0) {
-            delta.set(new Vector2(20f, 0));
-        }
-        if (screenPos.x > Gdx.graphics.getWidth()) {
-            delta.set(new Vector2(-20f, 0));
-        }
-        if (screenPos.y < 0) {
-            delta.set(new Vector2(0, -20f));
-        }
-        if (screenPos.y > Gdx.graphics.getHeight()) {
-            delta.set(new Vector2(0, 20f));
-        }
+        //apply force
         body.applyForceToCenter(delta, true);
     }
 

@@ -1,5 +1,6 @@
 package net.halfbolt.platformer.player.controller;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -11,12 +12,13 @@ public class Touchpad {
     private Texture knobTex;
     private Vector2 knobPos;
     private Vector2 pos;
-    private final Vector2 startingPos;
+    public final Vector2 startingPos;
     private double size;
     private float knobSize;
     private final boolean fixedPos = false;
     private Rectangle boundingBox;
     private int cursor = -1;
+    public boolean inside;
 
     public Touchpad(SpriteBatch batch, String backgroundPath, String knobPath, Vector2 pos, double size, float knobSize, Rectangle boundingBox) {
         this.batch = batch;
@@ -28,6 +30,7 @@ public class Touchpad {
         this.size = size;
         this.knobSize = knobSize;
         this.boundingBox = boundingBox;
+        inside = false;
     }
 
     public void render() {
@@ -102,12 +105,16 @@ public class Touchpad {
     }
 
     public boolean isPressed () {
-        return (knobPos.dst(startingPos) > 10);
+        return (knobPos.dst(startingPos) > 0);
+    }
+
+    public boolean inBounds (Vector2 touchPos) {
+        return (touchPos.dst(new Vector2(pos)) < Gdx.graphics.getWidth() / 6f);
     }
 
     //for bow button, check if player is auto-aiming or not
     public boolean autoAim () {
-        return (knobPos.dst(pos) < 20);
+        return (knobPos.dst(pos) < 40);
     }
 
     public void dispose() {

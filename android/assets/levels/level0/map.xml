@@ -1545,10 +1545,10 @@
     <tile x="10" y="21" tile="-1" rot="0" flipX="false"/>
     <tile x="11" y="21" tile="4" rot="1" flipX="false"/>
     <tile x="12" y="21" tile="2" rot="2" flipX="false"/>
-    <tile x="13" y="21" tile="5" rot="2" flipX="false"/>
+    <tile x="13" y="21" tile="4" rot="2" flipX="false"/>
     <tile x="14" y="21" tile="-1" rot="0" flipX="false"/>
     <tile x="15" y="21" tile="-1" rot="0" flipX="false"/>
-    <tile x="16" y="21" tile="5" rot="1" flipX="false"/>
+    <tile x="16" y="21" tile="4" rot="1" flipX="false"/>
     <tile x="17" y="21" tile="2" rot="2" flipX="false"/>
     <tile x="18" y="21" tile="4" rot="2" flipX="false"/>
     <tile x="19" y="21" tile="-1" rot="0" flipX="false"/>

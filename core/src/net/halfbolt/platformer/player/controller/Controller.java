@@ -19,8 +19,8 @@ import net.halfbolt.platformer.world.LevelManager;
 
 public class Controller {
     private final LevelManager manager;
-    private Touchpad moveTouchpad;
-    private Touchpad bowButton;
+    public Touchpad moveTouchpad;
+    public Touchpad bowButton;
     private SpriteBatch batch;
     private GuiRender gui;
     private Vector2 lanternTarget;
@@ -60,16 +60,24 @@ public class Controller {
         }
     }
 
+    private int t = 0;
+
     public void render() {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             moveTouchpad.render();
             bowButton.render();
             //get velocity of manual aim
+
             Player p = manager.getPlayer(0);
             Enemy closest = manager.getClosetEnemy(p.getPos());
             if ((getBowPressed() && !bowButton.autoAim()) || closest == null) {
                 bowProjection.set(new Vector2((float) bowButton.getX(), (float) bowButton.getY()));
+                t = 0;
             } else {
+                t++;
+                if (t < 2) {
+                    Gdx.input.vibrate(40);
+                }
                 bowProjection.set(new Vector2((closest.getPos().x - p.getPos().x) / 7f, (closest.getPos().y - p.getPos().y) / 7f));
             }
         }

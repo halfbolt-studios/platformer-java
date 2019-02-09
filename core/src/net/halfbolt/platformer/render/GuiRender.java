@@ -14,6 +14,7 @@ public class GuiRender {
     private BitmapFont font = new BitmapFont(true);
     private Controller control;
     private Render render;
+    public Vector2 touchPos;
 
     public GuiRender(Render render) {
 
@@ -25,6 +26,7 @@ public class GuiRender {
         control = new Controller(render.getManager(), this);
 
         this.render = render;
+        touchPos = new Vector2();
     }
 
     public Vector2 getTileFromCursor(Vector2 mousePos) {
@@ -60,6 +62,11 @@ public class GuiRender {
 
     public void touchDown(int x, int y, int cursor) {
         control.touchDown(x, y, cursor);
+        touchPos.set(new Vector2(x,y));
+        if (getControl().bowButton != null) {
+            control.bowButton.inside = control.bowButton.inBounds(touchPos);
+            control.moveTouchpad.inside = control.moveTouchpad.inBounds(touchPos);
+        }
     }
 
     public void touchDragged(int x, int y, int cursor) {
