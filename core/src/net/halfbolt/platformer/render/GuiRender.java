@@ -63,10 +63,6 @@ public class GuiRender {
     public void touchDown(int x, int y, int cursor) {
         control.touchDown(x, y, cursor);
         touchPos.set(new Vector2(x,y));
-        if (getControl().bowButton != null) {
-            control.bowButton.inside = control.bowButton.inBounds(touchPos);
-            control.moveTouchpad.inside = control.moveTouchpad.inBounds(touchPos);
-        }
     }
 
     public void touchDragged(int x, int y, int cursor) {

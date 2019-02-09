@@ -18,7 +18,6 @@ public class Touchpad {
     private final boolean fixedPos = false;
     private Rectangle boundingBox;
     private int cursor = -1;
-    public boolean inside;
 
     public Touchpad(SpriteBatch batch, String backgroundPath, String knobPath, Vector2 pos, double size, float knobSize, Rectangle boundingBox) {
         this.batch = batch;
@@ -30,11 +29,9 @@ public class Touchpad {
         this.size = size;
         this.knobSize = knobSize;
         this.boundingBox = boundingBox;
-        inside = false;
     }
 
     public void render() {
-        //System.out.println(knobPos.dst(startingPos) > 10);
         batch.begin();
         batch.draw(backgroundTex,
                 (float) (pos.x - size / 2), (float) (pos.y - size / 2),
