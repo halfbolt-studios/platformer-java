@@ -13,6 +13,7 @@ public class Bow {
     private float chargeAmount = 0;
     private ArrayList<Arrow> arrows = new ArrayList<>();
     private final LevelManager w;
+    private Vector2 target = new Vector2();
 
     public Bow(LevelManager w, Player p) {
         this.w = w;
@@ -20,6 +21,9 @@ public class Bow {
     }
 
     public void update() {
+        if (w.getRender().getGui().getControl().getBowPressed()) {
+            target = w.getRender().getGui().getControl().getBowTarget(p);
+        }
         //System.out.println(autoAim);
         if (w.getRender().getGui().getControl().getBowPressed()) {
             chargeAmount += Gdx.graphics.getDeltaTime();
@@ -28,6 +32,7 @@ public class Bow {
             }
         } else {
             if (chargeAmount > 0) {
+                //Gdx.app.log(Bow.class.getName(),target + "");
                 fireArrow();
                 w.getRender().getGui().getControl().bowProjection = new Vector2();
             }
@@ -43,11 +48,11 @@ public class Bow {
     }
 
     private void fireArrow() {
-        arrows.add(new Arrow(w, p, chargeAmount));
+        arrows.add(new Arrow(w, p, chargeAmount, target));
     }
 
     public void render() {
-        Vector2 target = w.getRender().getGui().getControl().getBowTarget(p);
+        //Gdx.app.log(Bow.class.getName(),target + "");
         float speed = 8;
         Vector2 delta = new Vector2(target.x * chargeAmount * speed, target.y * chargeAmount * speed);
 

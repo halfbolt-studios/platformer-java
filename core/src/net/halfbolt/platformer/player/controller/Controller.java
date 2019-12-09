@@ -3,10 +3,16 @@ package net.halfbolt.platformer.player.controller;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.controllers.ControllerAdapter;
+import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -18,6 +24,7 @@ import net.halfbolt.platformer.render.GuiRender;
 import net.halfbolt.platformer.world.LevelManager;
 
 public class Controller {
+    private static final String TAG = Controller.class.getName();
     private final LevelManager manager;
     public Touchpad moveTouchpad;
     public Touchpad bowButton;
@@ -87,7 +94,11 @@ public class Controller {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             return bowButton.isPressed();
         } else {
-            return Gdx.input.isButtonPressed(0);
+            if (Controllers.getControllers().size > 0) {
+                return (Math.abs(Controllers.getControllers().get(0).getAxis(3)) > 0.1 || Math.abs(Controllers.getControllers().get(0).getAxis(2)) > 0.1);
+            } else {
+                return Gdx.input.isButtonPressed(0);
+            }
         }
     }
 
@@ -101,7 +112,11 @@ public class Controller {
                 //manual aim
                 return new Vector2(bowProjection);
         } else {
-            return new Vector2((manager.getRender().getGui().getTileFromCursor().x - p.getPos().x) / 8f, (manager.getRender().getGui().getTileFromCursor().y - p.getPos().y) / 8f);
+            if (Controllers.getControllers().size > 0) {
+                return new Vector2(Controllers.getControllers().get(0).getAxis(3), Controllers.getControllers().get(0).getAxis(2));
+            } else {
+                return new Vector2((manager.getRender().getGui().getTileFromCursor().x - p.getPos().x) / 8f, (manager.getRender().getGui().getTileFromCursor().y - p.getPos().y) / 8f);
+            }
         }
     }
 
@@ -111,6 +126,8 @@ public class Controller {
             // Mobile
             return new Vector2((float) moveTouchpad.getX() * speed, (float) moveTouchpad.getY() * speed);
         } else {
+            //boolean buttonPressed = controller.getButton(buttonCode);
+            //float axisValue = controller.getAxis(axisCode);
             // Desktop
             int x = 0;
             int y = 0;
@@ -125,6 +142,11 @@ public class Controller {
             }
             if (Gdx.input.isKeyPressed(Input.Keys.D)) {
                 x += 1;
+            }
+            //get controller input
+            if (Controllers.getControllers().size > 0) {
+                x += Controllers.getControllers().get(0).getAxis(1) * 5;
+                y += Controllers.getControllers().get(0).getAxis(0) * 5;
             }
             return new Vector2(x, y).setLength(speed);
         }

@@ -62,6 +62,10 @@ public class Player {
         lantern.render();
         bow.render();
         drawHealth();
+        if (lantern.getPos().dst(getPos()) > 2) {
+            //lantern.resetPos();
+            //System.out.println("Out of range!");
+        }
     }
 
     private void drawHealth() {

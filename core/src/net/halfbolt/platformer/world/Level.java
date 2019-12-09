@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Level {
+    private static final String TAG = Level.class.getName();
     private ArrayList<Enemy> enemies = new ArrayList<>();
     private HashMap<Point, MapSegment> segments = new HashMap<>();
     private World box2dWorld;

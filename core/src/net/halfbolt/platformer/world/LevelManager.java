@@ -2,6 +2,9 @@ package net.halfbolt.platformer.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerAdapter;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import net.halfbolt.platformer.enemy.Enemy;
@@ -12,6 +15,7 @@ import net.halfbolt.platformer.render.Render;
 import java.util.ArrayList;
 
 public class LevelManager {
+    private static final String TAG = LevelManager.class.getName();
     private ArrayList<Level> levels = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
     private World box2dWorld;
@@ -97,6 +101,26 @@ public class LevelManager {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             paused = !paused;
+        }
+        //TODO: Make it pause when you unplug controller
+        if (Controllers.getControllers().size > 0) {
+            //Gdx.app.log(TAG, Controllers.getControllers().get(0) + "");
+            Controllers.getControllers().get(0).addListener(new ControllerAdapter() {
+                @Override
+                public void connected(Controller controller) {
+                    paused = false;
+                    Gdx.app.log(TAG, "unpaused");
+                    super.connected(controller);
+                }
+
+                @Override
+                public void disconnected(Controller controller) {
+                    paused = true;
+                    Gdx.app.log(TAG, "paused");
+                    super.disconnected(controller);
+                }
+
+            });
         }
     }
 

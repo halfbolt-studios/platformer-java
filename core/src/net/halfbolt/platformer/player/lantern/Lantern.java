@@ -17,9 +17,10 @@ public class Lantern {
     private Player player;
     private LevelManager w;
     private Body body;
+    private BodyDef bodyDef;
 
     public Lantern(LevelManager w, Player player) {
-        BodyDef bodyDef = new BodyDef();
+        bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(player.getPos());
 
@@ -50,6 +51,7 @@ public class Lantern {
     }
 
     public void update() {
+        //System.out.println(body.getPosition());
         Vector2 delta = w.getRender().getGui().getControl().getLanternDelta(getPos());
         Vector3 screenPos3 = w.getRender().getCamera().project(new Vector3(getPos().x, getPos().y, 0));
         Vector2 screenPos = new Vector2(screenPos3.x, screenPos3.y);
@@ -113,5 +115,29 @@ public class Lantern {
 
     public Vector2 getPos() {
         return body.getPosition();
+    }
+
+    public void resetPos() {
+        bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(player.getPos());
+
+        body = w.getWorld().createBody(bodyDef);
+        body.setLinearDamping(8f);
+        body.setAngularDamping(5f);
+
+        CircleShape circle = new CircleShape();
+        circle.setRadius(0.5f);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = circle;
+        fixtureDef.density = 0.5f;
+        fixtureDef.friction = 0.4f;
+        fixtureDef.filter.categoryBits = Player.playerBits;
+        fixtureDef.filter.maskBits = Tile.tileBits;
+
+        body.createFixture(fixtureDef);
+
+        circle.dispose();
     }
 }

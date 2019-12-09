@@ -1,5 +1,6 @@
 package net.halfbolt.platformer.player.bow;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -17,7 +18,7 @@ public class Arrow {
     private boolean destroyed = false;
     private boolean needDestroy = false;
 
-    public Arrow(LevelManager manager, Player p, float chargeAmount) {
+    public Arrow(LevelManager manager, Player p, float chargeAmount, Vector2 target) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(p.getPos());
@@ -39,7 +40,8 @@ public class Arrow {
         body.createFixture(fixtureDef);
 
         //get velocity of aim controller
-            Vector2 target = manager.getRender().getGui().getControl().getBowTarget(p);
+            //Vector2 target = manager.getRender().getGui().getControl().getBowTarget(p);
+            //Gdx.app.log(Arrow.class.getName(),target + "");
             float speed = 20;
             Vector2 delta = new Vector2(target.x * chargeAmount * speed, target.y * chargeAmount * speed);
             body.setLinearVelocity(body.getLinearVelocity().add(delta));
