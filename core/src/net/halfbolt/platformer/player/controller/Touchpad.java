@@ -10,7 +10,7 @@ public class Touchpad {
     private SpriteBatch batch;
     private Texture backgroundTex;
     private Texture knobTex;
-    private Vector2 knobPos;
+    public Vector2 knobPos;
     private Vector2 pos;
     public final Vector2 startingPos;
     private double size;

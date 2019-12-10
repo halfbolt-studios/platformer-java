@@ -113,9 +113,46 @@ public class Controller {
                 return new Vector2(bowProjection);
         } else {
             if (Controllers.getControllers().size > 0) {
+                return new Vector2(Controllers.getControllers().get(0).getAxis(3), Controllers.getControllers().get(0).getAxis(2)).setLength(0.5f);
+            } else {
+                return new Vector2((manager.getRender().getGui().getTileFromCursor().x - p.getPos().x), (manager.getRender().getGui().getTileFromCursor().y - p.getPos().y));
+            }
+        }
+    }
+
+    /*public Vector2 getTarget (Player p) {
+        if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
+            Enemy closest = manager.getClosetEnemy(p.getPos());
+            //auto-aim
+            if (closest != null && bowButton.autoAim() && bowProjection.equals(new Vector2())) {
+                return closest.getPos();
+            }
+            //manual aim
+            //TODO: Set this to be the difference between the center of the button and your touch
+            return new Vector2(bowProjection);
+        } else {
+            if (Controllers.getControllers().size > 0) {
                 return new Vector2(Controllers.getControllers().get(0).getAxis(3), Controllers.getControllers().get(0).getAxis(2));
             } else {
-                return new Vector2((manager.getRender().getGui().getTileFromCursor().x - p.getPos().x) / 8f, (manager.getRender().getGui().getTileFromCursor().y - p.getPos().y) / 8f);
+                return manager.getRender().getGui().getTileFromCursor();
+            }
+        }
+    }*/
+    public Vector2 getGUITarget (Player p) {
+        if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
+            Enemy closest = manager.getClosetEnemy(p.getPos());
+            //auto-aim
+            if (closest != null && bowButton.autoAim() && bowButton.isPressed()) {
+                System.out.println(closest.getPos().y - p.getPos().y);
+                return new Vector2(p.getPos().x + (closest.getPos().x - p.getPos().x), p.getPos().y + (closest.getPos().y - p.getPos().y));
+            }
+            //manual aim
+            return new Vector2(p.getPos().x + (float)bowButton.getX(), p.getPos().y + (float)bowButton.getY());
+        } else {
+            if (Controllers.getControllers().size > 0) {
+                return new Vector2((p.getPos().x - Controllers.getControllers().get(0).getAxis(3)), p.getPos().y - Controllers.getControllers().get(0).getAxis(2));
+            } else {
+                return manager.getRender().getGui().getTileFromCursor();
             }
         }
     }

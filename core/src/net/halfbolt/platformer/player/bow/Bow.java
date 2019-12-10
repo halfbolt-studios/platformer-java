@@ -1,6 +1,7 @@
 package net.halfbolt.platformer.player.bow;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import net.halfbolt.platformer.player.Player;
@@ -52,15 +53,24 @@ public class Bow {
     }
 
     public void render() {
-        //Gdx.app.log(Bow.class.getName(),target + "");
-        float speed = 8;
-        Vector2 delta = new Vector2(target.x * chargeAmount * speed, target.y * chargeAmount * speed);
+        //float speed = 8;
+        //Vector2 delta = new Vector2(target.x * chargeAmount * speed, target.y * chargeAmount * speed);
+        float targetLength = 8;
+        Vector2 targetPos = w.getRender().getGui().getControl().getGUITarget(p);
+        Vector2 targetVector = p.getPos().cpy().sub(targetPos);
+        float dist = targetVector.len();
+        targetVector.scl(1 / dist);
+        targetVector.scl(targetLength);
 
         if (chargeAmount > 0) {
             w.getRender().getSR().begin(ShapeRenderer.ShapeType.Filled);
             w.getRender().getSR().setColor(0.1f, 0.75f, 0, 1);
             w.getRender().getSR().rect(p.getPos().x - 0.5f,p.getPos().y - 1.2f, 1, 0.2f);
-            w.getRender().getSR().rectLine(p.getPos().x, p.getPos().y, p.getPos().x + delta.x, p.getPos().y + delta.y, 0.5f);
+            if (Controllers.getControllers().size > 0) {
+                w.getRender().getSR().rectLine(new Vector2(p.getPos().x, p.getPos().y), new Vector2(p.getPos().x + targetVector.x, p.getPos().y + targetVector.y), 0.5f);
+            } else {
+                w.getRender().getSR().rectLine(new Vector2(p.getPos().x, p.getPos().y), new Vector2(p.getPos().x + (-1 * targetVector.x), p.getPos().y + (-1 * targetVector.y)), 0.5f);
+            }
             w.getRender().getSR().setColor(0.75f, 0.2f, 0, 1);
             w.getRender().getSR().rect(p.getPos().x - 0.5f,p.getPos().y - 1.2f, chargeAmount, 0.2f);
             w.getRender().getSR().end();
