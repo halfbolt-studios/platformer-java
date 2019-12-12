@@ -42,8 +42,8 @@ public class Arrow {
         //get velocity of aim controller
             //Vector2 target = manager.getRender().getGui().getControl().getBowTarget(p);
             //Gdx.app.log(Arrow.class.getName(),target + "");
-            float speed = 20;
-            Vector2 delta = new Vector2(target.x * chargeAmount * speed, target.y * chargeAmount * speed);
+            float speed = 3;
+            Vector2 delta = new Vector2(-1 * target.x * chargeAmount * speed, -1 * target.y * chargeAmount * speed);
             body.setLinearVelocity(body.getLinearVelocity().add(delta));
         this.manager = manager;
     }
