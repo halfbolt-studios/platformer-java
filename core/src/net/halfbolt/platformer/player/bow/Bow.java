@@ -14,7 +14,6 @@ public class Bow {
     private float chargeAmount = 0;
     private ArrayList<Arrow> arrows = new ArrayList<>();
     private final LevelManager w;
-    private Vector2 target = new Vector2();
     private Vector2 targetVector = new Vector2();
     private Vector2 unitCircleVector = new Vector2();
 
@@ -24,26 +23,29 @@ public class Bow {
     }
 
     public void update() {
-        if (w.getRender().getGui().getControl().getBowPressed()) {
-            float targetLength = 8;
-            Vector2 targetPos = w.getRender().getGui().getControl().getBowTarget(p);
-            targetVector.set(p.getPos().cpy().sub(targetPos));
-            float dist = targetVector.len();
-            unitCircleVector = targetVector.scl(1 / dist);
-            targetVector.scl(targetLength);
-            //target = w.getRender().getGui().getControl().getBowTarget(p);
-        }
-        //System.out.println(autoAim);
-        if (w.getRender().getGui().getControl().getBowPressed()) {
-            chargeAmount += Gdx.graphics.getDeltaTime();
-            if (chargeAmount > 1) {
-                chargeAmount = 1;
+        if (w.getRender().getGui().getControl().getBowTarget(p) != null) {
+            if (w.getRender().getGui().getControl().getBowPressed() && !w.getRender().getGui().getControl().getBowTarget(p).equals(p.getPos())) {
+                float targetLength = 8;
+                Vector2 targetPos = w.getRender().getGui().getControl().getBowTarget(p);
+                targetVector.set(p.getPos().cpy().sub(targetPos));
+                float dist = targetVector.len();
+                unitCircleVector = targetVector.scl(1 / dist);
+                targetVector.scl(targetLength);
+                //target = w.getRender().getGui().getControl().getBowTarget(p);
+            }
+            if (w.getRender().getGui().getControl().getBowPressed()) {
+                chargeAmount += Gdx.graphics.getDeltaTime();
+                if (chargeAmount > 1) {
+                    chargeAmount = 1;
+                }
+            } else {
+                if (chargeAmount > 0) {
+                    fireArrow();
+                    w.getRender().getGui().getControl().bowProjection = new Vector2();
+                }
+                chargeAmount = 0;
             }
         } else {
-            if (chargeAmount > 0) {
-                fireArrow();
-                w.getRender().getGui().getControl().bowProjection = new Vector2();
-            }
             chargeAmount = 0;
         }
         ArrayList<Arrow> remove = new ArrayList<>();
@@ -56,7 +58,7 @@ public class Bow {
     }
 
     private void fireArrow() {
-        arrows.add(new Arrow(w, p, chargeAmount, unitCircleVector));
+        arrows.add(new Arrow(w, p.getPos(), true, chargeAmount, unitCircleVector));
     }
 
     public void render() {
@@ -69,7 +71,7 @@ public class Bow {
         targetVector.scl(1 / dist);
         targetVector.scl(targetLength);*/
 
-        if (chargeAmount > 0) {
+        if (chargeAmount > 0 && !w.getRender().getGui().getControl().getBowTarget(p).equals(p.getPos())) {
             w.getRender().getSR().begin(ShapeRenderer.ShapeType.Filled);
             w.getRender().getSR().setColor(0.1f, 0.75f, 0, 1);
             w.getRender().getSR().rect(p.getPos().x - 0.5f,p.getPos().y - 1.2f, 1, 0.2f);

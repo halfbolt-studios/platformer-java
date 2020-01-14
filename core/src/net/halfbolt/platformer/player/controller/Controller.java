@@ -32,6 +32,11 @@ public class Controller {
     private GuiRender gui;
     private Vector2 lanternTarget;
     public Vector2 bowProjection;
+    //TODO: make an options screen to set controllers for different controllers
+    private int moveXAxis = 3;
+    private int moveYAxis = 2;
+    private int aimXAxis = 1;
+    private int aimYAxis = 0;
 
     public Controller(LevelManager manager, GuiRender gui) {
         this.gui = gui;
@@ -75,17 +80,20 @@ public class Controller {
             bowButton.render();
             //get velocity of manual aim
 
+            //System.out.println(bowProjection);
             Player p = manager.getPlayer(0);
             Enemy closest = manager.getClosetEnemy(p.getPos());
-            if ((getBowPressed() && !bowButton.autoAim()) || closest == null) {
+            if (getBowPressed() && bowButton.aimReset == 1) {
                 bowProjection.set(new Vector2((float) bowButton.getX(), (float) bowButton.getY()));
                 t = 0;
-            } else {
+            } else if (getBowPressed() && bowButton.aimReset == 0 && closest != null) {
+                bowProjection.set(new Vector2((closest.getPos().x - p.getPos().x) / 7f, (closest.getPos().y - p.getPos().y) / 7f));
+            } else if (getBowPressed() && bowButton.aimReset == 2) {
                 t++;
                 if (t < 2) {
                     Gdx.input.vibrate(40);
                 }
-                bowProjection.set(new Vector2((closest.getPos().x - p.getPos().x) / 7f, (closest.getPos().y - p.getPos().y) / 7f));
+                bowProjection.set(new Vector2());
             }
         }
     }
@@ -95,7 +103,7 @@ public class Controller {
             return bowButton.isPressed();
         } else {
             if (Controllers.getControllers().size > 0) {
-                return (Math.abs(Controllers.getControllers().get(0).getAxis(3)) > 0.1 || Math.abs(Controllers.getControllers().get(0).getAxis(2)) > 0.1);
+                return (Math.abs(Controllers.getControllers().get(0).getAxis(aimXAxis)) > 0.1 || Math.abs(Controllers.getControllers().get(0).getAxis(aimYAxis)) > 0.1);
             } else {
                 return Gdx.input.isButtonPressed(0);
             }
@@ -106,16 +114,19 @@ public class Controller {
         if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
             Enemy closest = manager.getClosetEnemy(p.getPos());
             //auto-aim
-            if (closest != null && bowButton.autoAim() && bowButton.isPressed()) {
-                System.out.println(closest.getPos().y - p.getPos().y);
-                //TODO: see if this line can be shortened
+            if (bowButton.aimReset == 2) {
+                return null;
+            }
+            if (closest != null && bowButton.aimReset == 0 && bowButton.isPressed()) {
+                //System.out.println(closest.getPos().y - p.getPos().y);
+                //TODO: see if this line of code can be shortened
                 return new Vector2(p.getPos().x + (closest.getPos().x - p.getPos().x), p.getPos().y + (closest.getPos().y - p.getPos().y));
             }
             //manual aim
             return new Vector2(p.getPos().x + (float)bowButton.getX(), p.getPos().y + (float)bowButton.getY());
         } else {
             if (Controllers.getControllers().size > 0) {
-                return new Vector2((p.getPos().x + Controllers.getControllers().get(0).getAxis(3)), p.getPos().y + Controllers.getControllers().get(0).getAxis(2));
+                return new Vector2((p.getPos().x + Controllers.getControllers().get(0).getAxis(aimXAxis)), p.getPos().y + Controllers.getControllers().get(0).getAxis(aimYAxis));
             } else {
                 return manager.getRender().getGui().getTileFromCursor();
             }
@@ -147,8 +158,8 @@ public class Controller {
             }
             //get controller input
             if (Controllers.getControllers().size > 0) {
-                x += Controllers.getControllers().get(0).getAxis(1) * 5;
-                y += Controllers.getControllers().get(0).getAxis(0) * 5;
+                x += Controllers.getControllers().get(0).getAxis(moveXAxis) * 5;
+                y += Controllers.getControllers().get(0).getAxis(moveYAxis) * 5;
             }
             return new Vector2(x, y).setLength(speed);
         }

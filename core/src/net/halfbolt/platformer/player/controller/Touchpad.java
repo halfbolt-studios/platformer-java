@@ -18,6 +18,8 @@ public class Touchpad {
     private final boolean fixedPos = false;
     private Rectangle boundingBox;
     private int cursor = -1;
+    //0 means autoAiming, 1 means aiming, and 2 means going back to autoAiming
+    public int aimReset = 0;
 
     public Touchpad(SpriteBatch batch, String backgroundPath, String knobPath, Vector2 pos, double size, float knobSize, Rectangle boundingBox) {
         this.batch = batch;
@@ -46,6 +48,15 @@ public class Touchpad {
                 knobTex.getWidth(), knobTex.getHeight(),
                 false, true);
         batch.end();
+        if (!isPressed() && aimReset != 0) {
+            aimReset = 0;
+        }
+        if (!autoAim() && aimReset != 1) {
+            aimReset = 1;
+        }
+        if (autoAim() && aimReset == 1) {
+            aimReset = 2;
+        }
     }
 
     public double getX() {

@@ -18,10 +18,10 @@ public class Arrow {
     private boolean destroyed = false;
     private boolean needDestroy = false;
 
-    public Arrow(LevelManager manager, Player p, float chargeAmount, Vector2 target) {
+    public Arrow(LevelManager manager, Vector2 shooterPos, boolean playerShot, float chargeAmount, Vector2 target) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(p.getPos());
+        bodyDef.position.set(shooterPos);
 
         body = manager.getWorld().createBody(bodyDef);
         body.setLinearDamping(1f);
@@ -34,8 +34,12 @@ public class Arrow {
         fixtureDef.shape = circle;
         fixtureDef.density = 30f;
         fixtureDef.friction = 0.4f;
-        fixtureDef.filter.categoryBits = Player.playerBits;
-        fixtureDef.filter.maskBits = Tile.tileBits | Enemy.enemyBits;
+        fixtureDef.filter.categoryBits = playerShot ? Player.playerBits : Enemy.enemyBits;
+        if (playerShot) {
+            fixtureDef.filter.maskBits = Tile.tileBits | Enemy.enemyBits;
+        } else {
+            fixtureDef.filter.maskBits = Tile.tileBits | Player.playerBits;
+        }
 
         body.createFixture(fixtureDef);
 
