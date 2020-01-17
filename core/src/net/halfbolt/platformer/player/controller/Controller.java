@@ -136,12 +136,11 @@ public class Controller {
     }
 
     public Vector2 getMovementDelta() {
-        float speed = 0.6f;
         if (Gdx.app.getType() == Application.ApplicationType.Android
                 || Gdx.app.getType() == Application.ApplicationType.iOS) {
             // Mobile
-            return new Vector2((float) moveTouchpad.getX() * speed,
-                    (float) moveTouchpad.getY() * speed);
+            return new Vector2((float) moveTouchpad.getX(),
+                    (float) moveTouchpad.getY());
         } else {
             //boolean buttonPressed = controller.getButton(buttonCode);
             //float axisValue = controller.getAxis(axisCode);
@@ -165,7 +164,7 @@ public class Controller {
                 x += Controllers.getControllers().get(0).getAxis(moveXAxis) * 5;
                 y += Controllers.getControllers().get(0).getAxis(moveYAxis) * 5;
             }
-            return new Vector2(x, y).setLength(speed);
+            return new Vector2(x, y);
         }
     }
 

@@ -23,9 +23,9 @@ public class Player extends Entity {
     public Player(LevelManager w) {
         this.manager = w;
 
-        size = 0.3f;
+        size = 0.5f;
         speed = 120;
-        maxHealth = 5;
+        maxHealth = 3;
         init(w.get(0), new Point(5, 15));
 
         control = w.getRender().getGui().getControl();
@@ -40,6 +40,7 @@ public class Player extends Entity {
 
     }
 
+    @Override
     public void render() {
         lantern.render();
         bow.render();
@@ -51,7 +52,6 @@ public class Player extends Entity {
     }
 
     private void drawHealth() {
-        bow.render();
         drawHeart(new Vector2(getPos().x + 0.5f, getPos().y - 1.5f), 0.4f, health < 40);
         drawHeart(new Vector2(getPos().x, getPos().y - 1.5f), 0.4f, health < 20);
         drawHeart(new Vector2(getPos().x - 0.5f, getPos().y - 1.5f), 0.4f, health < 0);
@@ -81,11 +81,16 @@ public class Player extends Entity {
         manager.getRender().drawPolyFilled(pos, verts, color);
     }
 
+    @Override
     public boolean update() {
-        body.setLinearVelocity(body.getLinearVelocity().add(control.getMovementDelta()));
+        if (super.update()) {
+            return true;
+        }
+//        body.setLinearVelocity(body.getLinearVelocity().add(control.getMovementDelta().scl(speed)));
+        body.applyForce(control.getMovementDelta().scl(speed), body.getPosition(), true);
         lantern.update();
         bow.update();
-        return true;
+        return false;
     }
 
     @Override
@@ -93,6 +98,7 @@ public class Player extends Entity {
         return 0x0001;
     }
 
+    @Override
     public void dispose() {
         control.dispose();
         lantern.dispose();
