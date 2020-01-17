@@ -16,11 +16,9 @@ public class MapSegment {
         map = new Tilemap(this, "levels/level0");
     }
 
-
     public World getWorld() {
         return w;
     }
-
 
     public Tilemap getTilemap() {
         return map;

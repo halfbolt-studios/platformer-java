@@ -116,28 +116,4 @@ public class Lantern {
     public Vector2 getPos() {
         return body.getPosition();
     }
-
-    public void resetPos() {
-        bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(player.getPos());
-
-        body = w.getWorld().createBody(bodyDef);
-        body.setLinearDamping(8f);
-        body.setAngularDamping(5f);
-
-        CircleShape circle = new CircleShape();
-        circle.setRadius(0.5f);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = circle;
-        fixtureDef.density = 0.5f;
-        fixtureDef.friction = 0.4f;
-        fixtureDef.filter.categoryBits = Player.playerBits;
-        fixtureDef.filter.maskBits = Tile.tileBits;
-
-        body.createFixture(fixtureDef);
-
-        circle.dispose();
-    }
 }

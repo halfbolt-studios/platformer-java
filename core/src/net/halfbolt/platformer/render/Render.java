@@ -11,15 +11,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import java.util.ArrayList;
 import net.halfbolt.platformer.enemy.Enemy;
 import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.world.LevelManager;
 import net.halfbolt.platformer.world.tilemap.TileRender;
 
-import java.util.ArrayList;
-
 public class Render {
+
     private LevelManager levelManager;
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     private OrthographicCamera cam;
@@ -117,19 +117,22 @@ public class Render {
         float borderX = (float) Gdx.graphics.getWidth() / 2.5f;
         float borderY = (float) Gdx.graphics.getHeight() / 2.5f;
         // TODO: now that we have multiple players, we want the cam to zoom and move to the average of all players
-        Vector3 pos = cam.project(new Vector3(levelManager.getPlayer(0).getPos().x, levelManager.getPlayer(0).getPos().y, 0));
+        Vector3 pos = cam.project(new Vector3(levelManager.getPlayer(0).getPos().x,
+                levelManager.getPlayer(0).getPos().y, 0));
         float div = 200f;
         if (pos.x < borderX) {
             cam.position.set(cam.position.x + (pos.x - borderX) / div, cam.position.y, 0);
         }
         if (pos.x > Gdx.graphics.getWidth() - borderX) {
-            cam.position.set(cam.position.x + (pos.x - Gdx.graphics.getWidth() + borderX) / div, cam.position.y, 0);
+            cam.position.set(cam.position.x + (pos.x - Gdx.graphics.getWidth() + borderX) / div,
+                    cam.position.y, 0);
         }
         if (pos.y < borderY) {
             cam.position.set(cam.position.x, cam.position.y - (pos.y - borderY) / div, 0);
         }
         if (pos.y > Gdx.graphics.getHeight() - borderY) {
-            cam.position.set(cam.position.x, cam.position.y - (pos.y - Gdx.graphics.getHeight() + borderY) / div, 0);
+            cam.position.set(cam.position.x,
+                    cam.position.y - (pos.y - Gdx.graphics.getHeight() + borderY) / div, 0);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {

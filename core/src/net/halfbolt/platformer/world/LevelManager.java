@@ -6,18 +6,23 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.World;
+import java.util.ArrayList;
+import java.util.List;
 import net.halfbolt.platformer.enemy.Enemy;
 import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.player.bow.Arrow;
 import net.halfbolt.platformer.render.Render;
 
-import java.util.ArrayList;
-
 public class LevelManager {
+
     private static final String TAG = LevelManager.class.getName();
-    private ArrayList<Level> levels = new ArrayList<>();
-    private ArrayList<Player> players = new ArrayList<>();
+    private List<Level> levels = new ArrayList<>();
+    private List<Player> players = new ArrayList<>();
     private World box2dWorld;
     private int currentLevel = 0;
     private boolean paused = false;
@@ -140,7 +145,7 @@ public class LevelManager {
         return levels.get(currentLevel);
     }
 
-    public ArrayList<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
