@@ -35,7 +35,7 @@ public class Lantern {
         fixtureDef.shape = circle;
         fixtureDef.density = 0.5f;
         fixtureDef.friction = 0.4f;
-        fixtureDef.filter.categoryBits = Player.playerBits;
+        fixtureDef.filter.categoryBits = player.getBits();
         fixtureDef.filter.maskBits = Tile.tileBits;
 
         body.createFixture(fixtureDef);

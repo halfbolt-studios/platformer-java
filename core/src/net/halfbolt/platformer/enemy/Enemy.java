@@ -12,54 +12,20 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.TimeUtils;
 import net.halfbolt.platformer.enemy.pathfind.Node;
 import net.halfbolt.platformer.enemy.pathfind.Pathfind;
+import net.halfbolt.platformer.entity.Entity;
 import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Player;
 import net.halfbolt.platformer.world.Level;
 
-public class Enemy {
-    public static final short enemyBits = 0x0002;
-    private Body body;
+public abstract class Enemy extends Entity {
+
     private Node pathNode;
     private Point target;
-    protected Level level;
     private ShapeRenderer sr = new ShapeRenderer();
     private int offsetAmount = 5;
     private float lastHit;
     protected final float hitTime = 500; // time it takes to hit player in millis
-    protected float speed = 30; // amount of force to apply on the object every frame
-    protected float size = 0.45f;
     private float stunTimer = 0;
-    protected int maxHealth = 5;
-    private int health = 5;
-    private boolean destroyed = false;
-
-    protected void init(Level w, Point pos) {
-        this.level = w;
-        health = maxHealth;
-        createBody(pos);
-    }
-
-    protected void createBody(Point pos) {
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(pos.toVec());
-
-        body = level.getWorld().createBody(bodyDef);
-        body.setLinearDamping(30f);
-        body.setAngularDamping(5f);
-
-        CircleShape circle = new CircleShape();
-        circle.setRadius(size);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = circle;
-        fixtureDef.density = 0.5f;
-        fixtureDef.friction = 0.4f;
-        fixtureDef.filter.categoryBits = enemyBits;
-
-        body.createFixture(fixtureDef);
-        circle.dispose();
-    }
 
     public void debugRender() {
         Node child = pathNode;
@@ -69,24 +35,28 @@ public class Enemy {
             sr.setColor(Color.RED);
             sr.rect(child.getPos().getX(), child.getPos().getY(), 1, 1);
             sr.setColor(Color.GREEN);
-            sr.line(child.getPos().toVec().add(0.5f, 0.5f), child.getChild().getPos().toVec().add(0.5f, 0.5f));
+            sr.line(child.getPos().toVec().add(0.5f, 0.5f),
+                    child.getChild().getPos().toVec().add(0.5f, 0.5f));
             child = child.getChild();
         }
         sr.end();
     }
 
+    @Override
     public void render() {
         if (health < maxHealth) {
             level.getRender().getSR().begin(ShapeRenderer.ShapeType.Filled);
             level.getRender().getSR().setColor(0.9f, 0.2f, 0, 1);
-            level.getRender().getSR().rect(getPos().x - 0.5f,getPos().y - 1.2f, 1, 0.2f);
+            level.getRender().getSR().rect(getPos().x - 0.5f, getPos().y - 1.2f, 1, 0.2f);
             level.getRender().getSR().setColor(0.1f, 0.75f, 0, 1);
-            level.getRender().getSR().rect(getPos().x - 0.5f,getPos().y - 1.2f, (float) health / maxHealth, 0.2f);
+            level.getRender().getSR()
+                    .rect(getPos().x - 0.5f, getPos().y - 1.2f, (float) health / maxHealth, 0.2f);
 
             level.getRender().getSR().setColor(0f, 0f, 0, 1);
             for (int i = 0; i < maxHealth; i++) {
-                level.getRender().getSR().rect(getPos().x - 0.5f + (float) i / maxHealth - 0.01f,getPos().y - 1.2f,
-                        0.02f, 0.2f);
+                level.getRender().getSR()
+                        .rect(getPos().x - 0.5f + (float) i / maxHealth - 0.01f, getPos().y - 1.2f,
+                                0.02f, 0.2f);
             }
             level.getRender().getSR().end();
         }
@@ -94,18 +64,16 @@ public class Enemy {
 
     private void hitPlayer(Player player) {
         // TODO: animation here
-        if (TimeUtils.millis() - lastHit > hitTime) { // if last hit was half a second ago (or longer)
+        if (TimeUtils.millis() - lastHit
+                > hitTime) { // if last hit was half a second ago (or longer)
             player.health -= MathUtils.random(0.5f, 3);
             lastHit = TimeUtils.millis();
         }
     }
 
+    @Override
     public boolean update() {
-        if (destroyed) {
-            return true;
-        }
-        if (health < 0) {
-            destroy();
+        if (super.update()) {
             return true;
         }
         //damage player
@@ -116,7 +84,7 @@ public class Enemy {
         });
         //path finding to getSegment to player
         float minDistance = Float.MAX_VALUE;
-        Player closest = null;
+        Entity closest = null;
         for (Player p : level.getLevelManager().getPlayers()) {
             if (p.getLantern().getPos().dst(getPos()) < 2) {
                 stunTimer = 0.5f;
@@ -131,13 +99,7 @@ public class Enemy {
         return false;
     }
 
-    private void destroy() {
-        dispose();
-        level.getWorld().destroyBody(body);
-        destroyed = true;
-    }
-
-    private void findPath(Player p) {
+    private void findPath(Entity p) {
         if (destroyed) {
             throw new RuntimeException("Calling findPath when destroyed!");
         }
@@ -149,44 +111,37 @@ public class Enemy {
                 return;
             }
         }
-        if (pathNode == null || pathNode.getChild() == null || !new Point(p.getPos()).equals(target)) { // TODO: change it to get correct segment
-            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(p.getPos()), level.getSegment(new Point(0,0)), offsetAmount);
+        if (pathNode == null || pathNode.getChild() == null || !new Point(p.getPos())
+                .equals(target)) { // TODO: change it to get correct segment
+            pathNode = Pathfind.findPath(new Point(body.getPosition()), new Point(p.getPos()),
+                    level.getSegment(new Point(0, 0)), offsetAmount);
             target = new Point(p.getPos());
         }
         if (pathNode == null || pathNode.getChild() == null) {
             if (offsetAmount < 50) {
-                offsetAmount ++;
+                offsetAmount++;
             }
             return;
         }
         if (offsetAmount > 5) {
-            offsetAmount --;
+            offsetAmount--;
         }
         //move enemy to next path node
         if (body.getPosition().dst(pathNode.getPos().toVec()) < 1.5) {
             pathNode = pathNode.getChild();
         }
-        Vector2 targetVec = pathNode.getPos().toVec().add(new Vector2(0.5f, 0.5f)).sub(body.getPosition());
+        Vector2 targetVec = pathNode.getPos().toVec().add(new Vector2(0.5f, 0.5f))
+                .sub(body.getPosition());
         targetVec.setLength(speed * body.getMass());
         body.applyForce(targetVec, body.getPosition(), true);
     }
 
-    public Vector2 getPos() {
-        if (destroyed) {
-            throw new RuntimeException("Calling getPos when destroyed!");
-        }
-        return body.getPosition();
+    @Override
+    public short getBits() {
+        return 0x0002;
     }
 
-    public Body getBody() {
-        return body;
-    }
-
-    public void damage(int damage) {
-        health -= damage;
-        level.getRender().shake();
-    }
-
+    @Override
     public void dispose() {
         sr.dispose();
     }

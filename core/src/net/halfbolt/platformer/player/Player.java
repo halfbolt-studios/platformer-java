@@ -3,21 +3,17 @@ package net.halfbolt.platformer.player;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
+import java.util.ArrayList;
+import net.halfbolt.platformer.entity.Entity;
+import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.bow.Bow;
 import net.halfbolt.platformer.player.controller.Controller;
 import net.halfbolt.platformer.player.lantern.Lantern;
 import net.halfbolt.platformer.world.LevelManager;
 
-import java.util.ArrayList;
+public class Player extends Entity {
 
-public class Player {
-    public static final short playerBits = 0x0001;
     private Lantern lantern;
-    private Body body;
     private Controller control;
     public float health;
     private OrthographicCamera cam;
@@ -26,26 +22,12 @@ public class Player {
 
     public Player(LevelManager w) {
         this.manager = w;
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(new Vector2(5, 15));
 
-        body = w.getWorld().createBody(bodyDef);
-        body.setLinearDamping(8f);
-        body.setAngularDamping(5f);
+        size = 0.3f;
+        speed = 120;
+        maxHealth = 5;
+        init(w.get(0), new Point(5, 15));
 
-        CircleShape circle = new CircleShape();
-        circle.setRadius(0.8f);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = circle;
-        fixtureDef.density = 0.5f;
-        fixtureDef.friction = 0.4f;
-        fixtureDef.filter.categoryBits = playerBits;
-
-        body.createFixture(fixtureDef);
-
-        circle.dispose();
         control = w.getRender().getGui().getControl();
         cam = w.getRender().getCamera();
         health = 60;
@@ -87,7 +69,7 @@ public class Player {
             color = new Color(0.7f, 0, 0, 1f);
         }
         ArrayList<Vector2> verts = new ArrayList<>();
-        verts.add(new Vector2(0,0)); // center (to make the method draw all triangles from here
+        verts.add(new Vector2(0, 0)); // center (to make the method draw all triangles from here
         verts.add(new Vector2(size * (0f / 1f), size * (1f / 2f))); // bottom
         verts.add(new Vector2(size * (7f / 16f), size * (0f / 1f))); // middle right
         verts.add(new Vector2(size * (3f / 8f), size * (-3f / 8f))); // top right
@@ -99,18 +81,16 @@ public class Player {
         manager.getRender().drawPolyFilled(pos, verts, color);
     }
 
-    public void update() {
+    public boolean update() {
         body.setLinearVelocity(body.getLinearVelocity().add(control.getMovementDelta()));
         lantern.update();
         bow.update();
+        return true;
     }
 
-    public Vector2 getPos() {
-        return body.getPosition();
-    }
-
-    public Body getBody() {
-        return body;
+    @Override
+    public short getBits() {
+        return 0x0001;
     }
 
     public void dispose() {
