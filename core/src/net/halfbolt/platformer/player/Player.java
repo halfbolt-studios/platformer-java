@@ -1,5 +1,6 @@
 package net.halfbolt.platformer.player;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
@@ -24,9 +25,10 @@ public class Player extends Entity {
         this.manager = w;
 
         size = 0.5f;
-        speed = 120;
+        speed = 400;
         maxHealth = 3;
         init(w.get(0), new Point(5, 15));
+        body.setLinearDamping(8f);
 
         control = w.getRender().getGui().getControl();
         cam = w.getRender().getCamera();
@@ -86,8 +88,10 @@ public class Player extends Entity {
         if (super.update()) {
             return true;
         }
-//        body.setLinearVelocity(body.getLinearVelocity().add(control.getMovementDelta().scl(speed)));
-        body.applyForce(control.getMovementDelta().scl(speed), body.getPosition(), true);
+        body.applyForce(control.getMovementDelta()
+                        .setLength(speed * body.getMass() * body.getLinearDamping() * Gdx.graphics
+                                .getDeltaTime()),
+                body.getPosition(), true);
         lantern.update();
         bow.update();
         return false;

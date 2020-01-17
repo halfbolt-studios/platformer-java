@@ -5,17 +5,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.TimeUtils;
 import net.halfbolt.platformer.enemy.pathfind.Node;
 import net.halfbolt.platformer.enemy.pathfind.Pathfind;
 import net.halfbolt.platformer.entity.Entity;
 import net.halfbolt.platformer.helper.Point;
 import net.halfbolt.platformer.player.Player;
-import net.halfbolt.platformer.world.Level;
 
 public abstract class Enemy extends Entity {
 
@@ -132,7 +127,8 @@ public abstract class Enemy extends Entity {
         }
         Vector2 targetVec = pathNode.getPos().toVec().add(new Vector2(0.5f, 0.5f))
                 .sub(body.getPosition());
-        targetVec.setLength(speed * body.getMass());
+        targetVec.setLength(
+                speed * body.getMass() * body.getLinearDamping() * Gdx.graphics.getDeltaTime());
         body.applyForce(targetVec, body.getPosition(), true);
     }
 
