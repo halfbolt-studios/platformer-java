@@ -99,11 +99,12 @@ public class Controller {
             return bowButton.isPressed();
         } else {
             if (Controllers.getControllers().size > 0) {
-                return (Math.abs(Controllers.getControllers().get(0).getAxis(aimXAxis)) > 0.1
-                        || Math.abs(Controllers.getControllers().get(0).getAxis(aimYAxis)) > 0.1);
-            } else {
-                return Gdx.input.isButtonPressed(0);
+                if (Math.abs(Controllers.getControllers().get(0).getAxis(aimXAxis)) > 0.1
+                    || Math.abs(Controllers.getControllers().get(0).getAxis(aimYAxis)) > 0.1) {
+                    return true;
+                }
             }
+            return Gdx.input.isButtonPressed(0);
         }
     }
 
@@ -126,12 +127,15 @@ public class Controller {
                     e.getPos().y + (float) bowButton.getY());
         } else {
             if (Controllers.getControllers().size > 0) {
-                return new Vector2(
-                        (e.getPos().x + Controllers.getControllers().get(0).getAxis(aimXAxis)),
-                        e.getPos().y + Controllers.getControllers().get(0).getAxis(aimYAxis));
-            } else {
-                return manager.getRender().getGui().getTileFromCursor();
+                Vector2 aim = new Vector2(
+                    (e.getPos().x + Controllers.getControllers().get(0).getAxis(aimXAxis)),
+                    e.getPos().y + Controllers.getControllers().get(0).getAxis(aimYAxis));
+                if (Controllers.getControllers().get(0).getAxis(aimXAxis) > 0.01 ||
+                    Controllers.getControllers().get(0).getAxis(aimYAxis) > 0.01) {
+                    return aim;
+                }
             }
+            return manager.getRender().getGui().getTileFromCursor();
         }
     }
 
