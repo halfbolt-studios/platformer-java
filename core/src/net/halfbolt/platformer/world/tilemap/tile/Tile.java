@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Tile {
     private final TextureRegion region;
     private final int id;
-    public static final short tileBits = 0x0004;
+    public static final short tileBits = 0b1000;
     private Body body;
     private final int rot;
     private final Point pos;

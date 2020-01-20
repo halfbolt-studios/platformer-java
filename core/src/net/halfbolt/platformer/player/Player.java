@@ -27,6 +27,7 @@ public class Player extends Entity {
         size = 0.5f;
         speed = 400;
         maxHealth = 3;
+        category = Player.class;
         init(w.get(0), new Point(5, 15));
         body.setLinearDamping(8f);
 
@@ -39,7 +40,6 @@ public class Player extends Entity {
         lantern = new Lantern(w, this);
 
         bow = new Bow(w, this);
-
     }
 
     @Override
@@ -95,11 +95,6 @@ public class Player extends Entity {
         lantern.update();
         bow.update();
         return false;
-    }
-
-    @Override
-    public short getBits() {
-        return 0x0001;
     }
 
     @Override

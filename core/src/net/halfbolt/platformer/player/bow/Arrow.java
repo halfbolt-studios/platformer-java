@@ -7,10 +7,12 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import net.halfbolt.platformer.enemy.Enemy;
 import net.halfbolt.platformer.entity.Entity;
+import net.halfbolt.platformer.player.Player;
+import net.halfbolt.platformer.world.CollisionBits;
 import net.halfbolt.platformer.world.LevelManager;
 import net.halfbolt.platformer.world.tilemap.tile.Tile;
 
-public class Arrow {
+public class Arrow extends Entity {
 
     private Body body;
     private LevelManager manager;
@@ -34,8 +36,12 @@ public class Arrow {
         fixtureDef.shape = circle;
         fixtureDef.density = 30f;
         fixtureDef.friction = 0.4f;
-        fixtureDef.filter.categoryBits = shooter.getBits();
-        fixtureDef.filter.maskBits = (short) (Tile.tileBits | shooter.getBits());
+        fixtureDef.filter.categoryBits = CollisionBits.getBits(Arrow.class);
+        if (shooter instanceof Player) {
+            fixtureDef.filter.maskBits = (short) (CollisionBits.getBits(Tile.class) | CollisionBits.getBits(Enemy.class));
+        } else if (shooter instanceof Enemy) {
+            fixtureDef.filter.maskBits = (short) (CollisionBits.getBits(Tile.class) | CollisionBits.getBits(Player.class));
+        }
 
         body.createFixture(fixtureDef);
 

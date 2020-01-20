@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import net.halfbolt.platformer.player.Player;
+import net.halfbolt.platformer.world.CollisionBits;
 import net.halfbolt.platformer.world.LevelManager;
 import net.halfbolt.platformer.world.tilemap.tile.Tile;
 
@@ -35,7 +36,7 @@ public class Lantern {
         fixtureDef.shape = circle;
         fixtureDef.density = 0.5f;
         fixtureDef.friction = 0.4f;
-        fixtureDef.filter.categoryBits = player.getBits();
+        fixtureDef.filter.categoryBits = CollisionBits.getBits(Player.class);
         fixtureDef.filter.maskBits = Tile.tileBits;
 
         body.createFixture(fixtureDef);

@@ -22,6 +22,10 @@ public abstract class Enemy extends Entity {
     protected final float hitTime = 500; // time it takes to hit player in millis
     private float stunTimer = 0;
 
+    protected Enemy() {
+        category = Enemy.class;
+    }
+
     public void debugRender() {
         Node child = pathNode;
         sr.setProjectionMatrix(level.getRender().getCamera().combined);
@@ -130,11 +134,6 @@ public abstract class Enemy extends Entity {
         targetVec.setLength(
                 speed * body.getMass() * body.getLinearDamping() * Gdx.graphics.getDeltaTime());
         body.applyForce(targetVec, body.getPosition(), true);
-    }
-
-    @Override
-    public short getBits() {
-        return 0x0002;
     }
 
     @Override

@@ -6,6 +6,7 @@ import net.halfbolt.platformer.world.Level;
 public class SmallEnemy extends Enemy {
 
     public SmallEnemy(Level l, Point pos) {
+        super();
         size = 0.3f;
         speed = 350;
         maxHealth = 5;

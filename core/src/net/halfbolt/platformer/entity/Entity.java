@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import net.halfbolt.platformer.helper.Point;
-import net.halfbolt.platformer.player.Player;
+import net.halfbolt.platformer.world.CollisionBits;
 import net.halfbolt.platformer.world.Level;
 
 public abstract class Entity {
@@ -17,6 +17,7 @@ public abstract class Entity {
     protected float speed = 30; // amount of force to apply on the object every frame
     protected boolean destroyed = false;
     protected float size = 0.45f;
+    protected Class<?> category;
     protected Body body;
 
     protected void init(Level w, Point pos) {
@@ -41,7 +42,7 @@ public abstract class Entity {
         fixtureDef.shape = circle;
         fixtureDef.density = 0.5f;
         fixtureDef.friction = 0.4f;
-        fixtureDef.filter.categoryBits = getBits();
+        fixtureDef.filter.categoryBits = CollisionBits.getBits(category);
 
         body.createFixture(fixtureDef);
         circle.dispose();
@@ -83,6 +84,4 @@ public abstract class Entity {
         }
         return body.getPosition();
     }
-
-    public abstract short getBits();
 }
